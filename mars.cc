@@ -259,15 +259,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	for(int i =0; i<num_seqs; i++)
-	{
-	cout<<"\n";
-		for(int j= 0; j<num_seqs; j++)
-		{
-			cout<<D[i][j] . rot << " ";
-		}
-	}
-	
 	fprintf ( stderr, " Creating the guide tree\n" );
 
 	/*Creates the guide tree*/
