@@ -40,8 +40,6 @@ static struct option long_options[] =
    { "cost-substitution",	optional_argument, NULL, 'S' },
    { "cost-insertion",		optional_argument, NULL, 'I' },
    { "cost-deletion",		optional_argument, NULL, 'D' },
-   { "score-match",     	optional_argument, NULL, 'm' },
-   { "score-mismatch",     	optional_argument, NULL, 'r' },
    { "score-insertion",     	optional_argument, NULL, 'f' },
    { "score-deletion",     	optional_argument, NULL, 'g' },
    { "help",                    no_argument,       NULL, 'h' },
@@ -70,15 +68,13 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> S				= 1;
    sw -> I 				= 1;
    sw -> D				= 1;
-   sw -> m				= 1;
-   sw -> r				= -1;
-   sw -> f				= -1;
-   sw -> g				= -1;
+   sw -> f				= -4;
+   sw -> g				= -4;
    sw -> l                              = 50;
    sw -> q                              = 5;
    args = 0;
 
-   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:S:I:D:m:r:f:g:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
+   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:S:I:D:f:g:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
     {
 
       switch ( opt )
@@ -146,24 +142,6 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
               return ( 0 );
             }
            sw -> D = val;
-           break;
-
-	case 'm':
-           val = strtol ( optarg, &ep, 10 );
-           if ( optarg == ep )
-            {
-              return ( 0 );
-            }
-           sw -> m = val;
-           break;
-
-	case 'r':
-           val = strtol ( optarg, &ep, 10 );
-           if ( optarg == ep )
-            {
-              return ( 0 );
-            }
-           sw -> r = val;
            break;
 
 	case 'f':
@@ -239,10 +217,8 @@ void usage ( void )
    fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length.\n");
    fprintf ( stdout, "  -l, --block-length          <int>     The length of each block.\n\n");
    fprintf ( stdout, " Optional:\n" ); 
-   fprintf ( stdout, "  -m, --score-match           <int>     Score of match for refinement. Default: 1.\n" );
-   fprintf ( stdout, "  -r, --score-mismatch        <int>     Score of mismatch for refinement. Default: -1.\n" );
-   fprintf ( stdout, "  -f, --score-insertion       <int>     Score of insertion for refinement. Default: -1.\n" );
-   fprintf ( stdout, "  -g, --score-deletion        <int>     Score of deletion for refinement. Default: -1.\n" );
+   fprintf ( stdout, "  -f, --score-insertion       <int>     Score of inserting a character in alignment. Default: -4.\n" );
+   fprintf ( stdout, "  -g, --score-deletion        <int>     Score of deleting a character in alignment. Default: -4.\n" );
    fprintf ( stdout, "  -O, --gap-open              <int>     Affine gap open penalty. Default: -10.\n" );
    fprintf ( stdout, "  -E, --gap-extend            <int>     Affine gap extension penalty. Default: -2.\n" );
    fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking a block\n"

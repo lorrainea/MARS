@@ -36,13 +36,12 @@ int delta ( char a, char b, struct TSwitch sw )
     {
 	return 0;
     }
-    if ( a == b )
-    {
-	return sw . m;
-    }
     else
     {
-	return sw . r;
+	int matching_score = ( sw . matrix ? pro_delta( a, b ) : nuc_delta( a, b ) ) ;
+	if ( matching_score == ERR )
+		return 0;
+	else return matching_score;
     }
  }
 
@@ -82,12 +81,12 @@ unsigned int nw_ag ( unsigned char * p, unsigned int m, unsigned char * t, unsig
         
    	for ( i = 0; i < m + 1; i++ )
 	{
-		D[i] = m * sw . r;
+		D[i] = m * sw . g;
 	}
 
 	for ( j = 0; j < n + 1; j++ )
 	{
-		I[j] = n * sw . r;
+		I[j] = n * sw . f;
 	}
 
 	T[0][0] = 0;

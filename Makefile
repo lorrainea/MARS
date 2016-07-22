@@ -8,7 +8,7 @@ LFLAGS= -std=c++11 -I ./ -I ./libsdsl/include/ -L ./libsdsl/lib/ -lsdsl -ldivsuf
  
 EXE=    mars
  
-SRC=    mars.cc utils.cc sacsc.cc ced.cc nj.cc progAlignment.cc
+SRC=    mars.cc utils.cc sacsc.cc ced.cc nj.cc progAlignment.cc matrices.cc
  
 HD=     mars.h sacsc.h ced.h nj.h Makefile
  

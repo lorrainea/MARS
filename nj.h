@@ -40,5 +40,5 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, dou
 
 unsigned int alignAllocation( double ** &PM, double ** &SM, int ** &TB, vector<char> * characters, vector<unsigned char*> * profileA, vector<unsigned char*> * profileB,  struct TSwitch sw);
 
-int similarity( unsigned char x, unsigned char y, struct TSwitch sw );
+int similarity( unsigned char x, unsigned char y, struct TSwitch sw);
 

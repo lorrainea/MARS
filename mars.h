@@ -19,6 +19,7 @@
 #define INITIAL_SC		-100000
 #define ALLOC_SIZE               104857
 #define DEL                     '$'
+#define NA			'N'
 #define DEL_STR                 "$"
 #define GAP 			'-'
 #define ERR                      24
@@ -43,18 +44,16 @@ struct TSwitch
    char               * alphabet;
    char               * input_filename;
    char               * output_filename;
-   unsigned int         matrix;;
+   unsigned int         matrix;
    double	        P;
    int 			O, E, S, I, D;
-   int 			m, r, f, g;
-   double	        min_sim;
+   int 			f, g;
    unsigned int         l;
    unsigned int         q;
  };
 
 struct TPOcc
  {
-   unsigned int         pos;
    double	        err;
    unsigned int		rot;
  };
@@ -67,3 +66,7 @@ TPOcc * unique ( TPOcc * first, TPOcc * last );
 int decode_switches ( int argc, char * argv [], struct TSwitch * sw );
 double gettime ( void );
 void usage ( void );
+int nuc_delta ( char a, char b );
+int pro_delta ( char a, char b );
+unsigned int nuc_char_to_index ( char a );
+unsigned int pro_char_to_index ( char a );

@@ -61,12 +61,12 @@ int main(int argc, char **argv)
         }
         else
         {
+
                 if      ( ! strcmp ( "DNA", sw . alphabet ) )   { alphabet = ( char * ) DNA;  sw . matrix = 0; }
-                else if ( ! strcmp ( "RNA", sw . alphabet ) )   { alphabet = ( char * ) RNA;  sw . matrix = 0; }
                 else if ( ! strcmp ( "PROT", sw . alphabet ) )  { alphabet = ( char * ) PROT; sw . matrix = 1; }
                 else
                 {
-                        fprintf ( stderr, " Error: alphabet argument a should be `DNA' for nucleotide sequences or `PROT' for protein sequences or `USR' for sequences over a user-defined alphabet!\n" );
+                        fprintf ( stderr, " Error: alphabet argument a should be `DNA' for nucleotide sequences or `PROT' for protein sequences!\n" );
                         return ( 1 );
                 }
 
@@ -256,6 +256,15 @@ int main(int argc, char **argv)
 
 			free( xr );
 
+		}
+	}
+
+	for(int i =0; i<num_seqs; i++)
+	{
+	cout<<"\n";
+		for(int j= 0; j<num_seqs; j++)
+		{
+			cout<<D[i][j] . rot << " ";
 		}
 	}
 	

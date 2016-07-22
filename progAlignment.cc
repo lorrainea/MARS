@@ -683,14 +683,34 @@ int similarity( unsigned char x, unsigned char y, struct TSwitch sw)
    	{
 		sim = 0;
    	}
-	else if( x == y )
+	else if ( x == GAP && y == GAP)
 	{
-		sim = sw . m;
+		int matching_score = ( sw . matrix ? pro_delta( NA, NA ) : nuc_delta( NA, NA ) ) ;
+		if ( matching_score == ERR )
+			sim = 0;
+		else sim = matching_score;
 	}
-	else if ( x != y )
+	else if( x == GAP )
 	{
-		sim = sw . r;
-	}	
+		int matching_score = ( sw . matrix ? pro_delta( NA, y ) : nuc_delta( NA, y ) ) ;
+		if ( matching_score == ERR )
+			sim = 0;
+		else sim = matching_score;
+	}
+	else if( y == GAP )
+	{
+		int matching_score = ( sw . matrix ? pro_delta( x, NA ) : nuc_delta( x, NA ) ) ;
+		if ( matching_score == ERR )
+			sim = 0;
+		else sim = matching_score;
+	}
+    	else
+    	{
+		int matching_score = ( sw . matrix ? pro_delta( x, y ) : nuc_delta( x, y ) ) ;
+		if ( matching_score == ERR )
+			sim = 0;
+		else sim = matching_score;
+    	}	
 
 return sim;
 }
@@ -705,13 +725,31 @@ unsigned int alignPairs(unsigned char * x, unsigned char * y, unsigned char ** s
 
 	TAlign align;
     	resize(rows(align), 2);
-   	assignSource(row(align, 0), x);
-   	assignSource(row(align, 1), y);
+    	assignSource(row(align, 0), x);
+    	assignSource(row(align, 1), y);
+
+
+	typedef int TValue;
+    	typedef Score<TValue, ScoreMatrix<Dna5, Default> > DNAMatrix;
+
 
 	if( sw . O < 0 )
-		int score = globalAlignment(align, Score<int, Simple>(sw.m, sw.r, sw. E, sw.O), AffineGaps() ); //use nw_ag if O < 0
+	{	
+		//if( sw . matrix == 1)
+		//	int score = globalAlignment(align, Blosum62(sw.E, sw.O), AffineGaps());
+		//else int score = globalAlignment(align, DNAMatrix(sw.E, sw.O), AffineGaps());	
+		
+		int score = globalAlignment(align, Score<int, Simple>(0, sw.g, sw. E, sw.O), AffineGaps() ); //use nw_ag if O < 0
+		
+		//int score = globalAlignment(align, Score<int, Simple>(1, -1, sw . g)); 
+	}
 	else
-		int score = globalAlignment(align, Score<int, Simple>(0, sw . f, sw . g)); // use nw if O > 0
+	{
+		int score = globalAlignment(align, Score<int, Simple>(0, sw . f, sw . g));
+		//if( sw . matrix == 1)
+		//	int score = globalAlignment(align, Blosum62(sw.E, sw.O), DynamicGaps());
+		//else int score = globalAlignment(align, DNAMatrix(sw.E, sw.O), DynamicGaps());	
+	}
 
 	unsigned xLength = length(row(align, 0)); //sequence x in alignment
 	unsigned yLength = length(row(align, 1)); //sequence y in alignment
@@ -816,11 +854,11 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, dou
 
 	for ( int i = 0; i < m + 1; i++ )
 	{
-		DM[i] =  m * sw . r;
+		DM[i] =  m * sw . g;
 	}
 	for ( int j = 0; j < n + 1; j++ )
 	{
-		IM[j] = n * sw . r;
+		IM[j] = n * sw . f;
 	}
 
 	TB[0][0] = 0;
