@@ -68,7 +68,7 @@ int main(int argc, char **argv)
                         return ( 1 );
                 }
 
-		if ( sw . P < 0 || sw . P >= 10.1 )
+		if ( sw . P < 0 || sw . P >= 5.1 )
 		{
 			fprintf ( stderr, " Error: The optional percentage flag should be in the range of 0 to 5.\n" );
 			return ( 1 );

@@ -245,7 +245,7 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 
 	free ( Xr );
 
-	if( sw . O < 0 )
+	if( sw . O != sw . E )
 	{
 		free ( I );
 		free ( D );
