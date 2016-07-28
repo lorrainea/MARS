@@ -25,16 +25,15 @@
 #define ERR                      24
 #define PROT                    "ARNDCQEGHILKMFPSTWYVBZX*"   //Proteins alphabet
 #define DNA                     "ATGCSWRYKMBVHDN"            //IUPAC alphabet
-#define RNA                     "AUGCN"                      //RNA alphabet
+
 #define NUC_SCORING_MATRIX_SIZE 15
 #define PRO_SCORING_MATRIX_SIZE 24
-#define WORD_LEN 		64
 
 #define MAX2(a,b) ((a) > (b)) ? (a) : (b)
 #define MIN2(a,b) ((a) < (b)) ? (a) : (b)  
 #define MAX3(a, b, c) ((a) > (b) ? ((a) > (c) ? (a) : (c)) : ((b) > (c) ? (b) : (c)))
-
-#include <tuple>
+#define nuc_delta(a,b) EDNAFULL_matrix[ EDNA[(int)(a)] ][ EDNA[(int)(b)] ]
+#define pro_delta(a,b) EBLOSUM62_matrix[ BLOSUM[(int)(a)] ][ BLOSUM[(int)(b)] ]
 
 using namespace std;
 typedef unsigned long int WORD;
@@ -46,7 +45,7 @@ struct TSwitch
    char               * output_filename;
    unsigned int         matrix;
    double	        P;
-   int 			O, E, S, I, D;
+   int 			O, E, U, V, S, I, D;
    int 			f, g;
    unsigned int         l;
    unsigned int         q;
@@ -61,12 +60,12 @@ struct TPOcc
 
 typedef int32_t INT;
 
+extern unsigned int EDNA[];
+extern unsigned int BLOSUM[];
+
 void create_rotation ( unsigned char * x, unsigned int offset, unsigned char * rotation );
 TPOcc * unique ( TPOcc * first, TPOcc * last );
 int decode_switches ( int argc, char * argv [], struct TSwitch * sw );
 double gettime ( void );
 void usage ( void );
-int nuc_delta ( char a, char b );
-int pro_delta ( char a, char b );
-unsigned int nuc_char_to_index ( char a );
-unsigned int pro_char_to_index ( char a );
+void init_substitution_score_tables ( void );

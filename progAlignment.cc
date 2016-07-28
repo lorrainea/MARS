@@ -25,6 +25,8 @@
 #include <seqan/graph_msa.h>
 #include <seqan/align.h>
 #include <vector>
+#include "EDNAFULL.h"
+#include "EBLOSUM62.h"
 #include "mars.h"
 #include "sacsc.h"
 #include "nj.h"
@@ -35,6 +37,7 @@ using namespace std;
 unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, struct TSwitch  sw, int * Rot, vector<array<int, 2>> * branchingOrder, unsigned int num_seqs )
 {
 	
+	init_substitution_score_tables ();
 	int * R = ( int * ) calloc ( num_seqs , sizeof ( int ) );
 
 	unsigned char ** sequences;
@@ -216,7 +219,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				int ** TB; 
 				double ** SM, ** PM, * IM, * DM;
 			
-				if( sw . O < 0 )
+				if( sw . U != sw . V )
 					alignAllocation_ag( PM, SM, IM, DM, TB, characters, profileA, profileB, sw );	
 				else alignAllocation( PM, SM, TB, characters, profileA, profileB, sw );
 			
@@ -240,7 +243,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 						profileB->push_back( rotatedSeq[j] );
 					}
 
-					if ( sw . O < 0 )
+					if( sw . U != sw . V )
 						alignmentScore_ag( profileA, profileB, &score, sw, i, &rotation, sequences, TB, SM, PM, IM, DM, characters, 0);
 					else alignmentScore( profileA, profileB, &score, sw, i, &rotation, sequences, TB, SM, PM, characters, 0);
 					
@@ -261,7 +264,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 					free( TB[j] );
 				}
 				free( TB );
-				if( sw . O < 0 )
+				if( sw . U != sw . V )
 				{
 					free( IM );
 					free( DM );
@@ -347,12 +350,12 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			int ** TBl;
 			double ** SMl, ** PMl, * IMl, * DMl;
 
-			if( sw . O < 0 )
+			if( sw . U != sw . V )
 				alignAllocation_ag( PMl, SMl, IMl, DMl, TBl, characters, profileA, profileB, sw );	
 			else alignAllocation( PMl, SMl, TBl, characters, profileA, profileB, sw );
 
 			/* Calculate traceback matrix */
-			if ( sw . O < 0 )
+			if( sw . U != sw . V )
 				alignmentScore_ag( profileA, profileB, &score, sw, 0, &rotation, sequences, TBl, SMl, PMl, IMl, DMl, characters, 1);
 			else alignmentScore( profileA, profileB, &score, sw, 0, &rotation, sequences, TBl, SMl, PMl, characters, 1);
 
@@ -363,7 +366,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			for(int i=0; i<m+ 1; i++)
 				free( SMl[i] );
 
-			if( sw . O < 0 )
+			if( sw . U != sw . V )
 			{
 				free( IMl );
 				free( DMl );
@@ -733,7 +736,7 @@ unsigned int alignPairs(unsigned char * x, unsigned char * y, unsigned char ** s
     	typedef Score<TValue, ScoreMatrix<Dna5, Default> > DNAMatrix;
 
 
-	if( sw . O < 0 )
+	if( sw . O != sw . E )
 	{	
 		//if( sw . matrix == 1)
 		//	int score = globalAlignment(align, Blosum62(sw.E, sw.O), AffineGaps());
@@ -868,11 +871,11 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, dou
          		for(int j=1; j<n+1; j++)
 				TB[0][j] = -1;
 
-	SM[1][0] = sw . O;
+	SM[1][0] = sw . U;
 	for (int  i = 2; i < m + 1; i++ )
 		SM[i][0] = SM[i - 1][0] + sw . E;
 	
-	SM[0][1] = sw . O;
+	SM[0][1] = sw . U;
 	for ( int j = 2; j < n + 1; j++ )
 		SM[0][j] = SM[0][j - 1] + sw . E;
 
@@ -907,10 +910,10 @@ unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsign
 		{
 			u = SM[i-1][j-1] + probScore( characters, i, j, PM, profileA, profileB , sw );
 
-			DM[i] = MAX2 ( DM[i - 1] + sw . E, SM[i - 1][j] + sw . O );
+			DM[i] = MAX2 ( DM[i - 1] + sw . V, SM[i - 1][j] + sw . U );
 			v = DM[i];
 
-			IM[j] = MAX2 ( IM[j - 1] + sw . E, SM[i][j - 1] + sw . O );
+			IM[j] = MAX2 ( IM[j - 1] + sw . V, SM[i][j - 1] + sw . U );
 			w = IM[j];
 
 			SM[i][j] = MAX3 ( u, v, w );

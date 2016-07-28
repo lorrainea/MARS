@@ -19,30 +19,33 @@
 #include <seqan/align.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "EDNAFULL.h"
+#include "EBLOSUM62.h"
 #include "mars.h"
 #include "sacsc.h"
 #include "ced.h"
 
-using namespace std;
-using namespace seqan;
+
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 #define MAX3(a, b, c) ((a) > (b) ? ((a) > (c) ? (a) : (c)) : ((b) > (c) ? (b) : (c)))
 
 
+using namespace std;
+using namespace seqan;
+
 int delta ( char a, char b, struct TSwitch sw )
  {
-    if ( a == DEL || b == DEL ) 
-    {
-	return 0;
-    }
-    else
-    {
-	int matching_score = ( sw . matrix ? pro_delta( a, b ) : nuc_delta( a, b ) ) ;
-	if ( matching_score == ERR )
+  	if ( a == DEL || b == DEL ) 
+    	{
 		return 0;
-	else return matching_score;
-    }
+    	}
+   	else
+	{
+		int matching_score = ( sw . matrix ? pro_delta( a, b ) : nuc_delta( a, b ) ) ;
+		if ( matching_score == ERR )
+			return 0;
+		else return matching_score;
+    	}
  }
 
 
@@ -144,6 +147,7 @@ unsigned int nw_allocation( unsigned int m, unsigned int n, int ** &T )
 
 unsigned int nw ( unsigned char * p, unsigned int m, unsigned char * t, unsigned int n, struct TSwitch  sw, int * score, int ** &T )
 {
+	init_substitution_score_tables ();
 	int ins = sw . f;
 	int del = sw . g;
 	int i, j;
@@ -170,7 +174,6 @@ unsigned int nw ( unsigned char * p, unsigned int m, unsigned char * t, unsigned
 
 unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned char * y, struct TSwitch  sw, unsigned int * rotation, unsigned int * distance ) 
 {
-
 	unsigned int rot = *rotation;
 
 	int * I;
@@ -209,7 +212,7 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 	unsigned int rrot = 0;
 	unsigned char * Xr = ( unsigned char * ) calloc( ( 3 * sl + 1 ) , sizeof( unsigned char ) );
 
-	if( sw . O < 0 )
+	if( sw . O != sw . E )
 		nw_ag_allocation ( m, n, I, D, T );
 	else 
 		nw_allocation( m, n, T );
@@ -223,7 +226,7 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
     		memmove ( &Xr[( 3 * sl ) - i], &X[0], i );
     		Xr[3*sl] = '\0';
 
-		if ( sw . O < 0 )
+		if( sw . O != sw . E )
 			nw_ag ( Xr, mm , Y, nn, sw, &score, I, D, T );
 		else
 			nw ( Xr, mm, Y, nn, sw, &score, T );

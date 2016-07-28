@@ -31,8 +31,6 @@
 #include "ced.h"
 #include "nj.h"
 
-
-
 int main(int argc, char **argv)
 {
 	struct TSwitch  sw;
@@ -54,7 +52,7 @@ int main(int argc, char **argv)
         i = decode_switches ( argc, argv, &sw );
 
 	/* Check the arguments */
-        if ( i < 11 )
+        if ( i < 10 )
         {
                 usage ();
                 return ( 1 );
@@ -204,7 +202,7 @@ int main(int argc, char **argv)
 	}
 	
 
-	fprintf ( stderr, " Starting the multiple circular approximate string matching\n" );
+	fprintf ( stderr, " Computing cyclic edit distance for all sequence pairs\n" );
 		
 
 	TPOcc ** D;

@@ -34,8 +34,10 @@ static struct option long_options[] =
    { "output-file",             required_argument, NULL, 'o' },
    { "block-length",            required_argument, NULL, 'l' },
    { "q-length",                required_argument, NULL, 'q' },
-   { "gap-open",                optional_argument, NULL, 'O' },
-   { "gap-extend",              optional_argument, NULL, 'E' },
+   { "gap-open-pairwise",       optional_argument, NULL, 'O' },
+   { "gap-extend-pairwise",     optional_argument, NULL, 'E' },
+   { "gap-open-pa",             optional_argument, NULL, 'U' },
+   { "gap-extend-pa",           optional_argument, NULL, 'V' },
    { "refine-blocks",           optional_argument, NULL, 'P' },
    { "cost-substitution",	optional_argument, NULL, 'S' },
    { "cost-insertion",		optional_argument, NULL, 'I' },
@@ -64,6 +66,8 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> output_filename                = NULL;
    sw -> O                              = -10;
    sw -> E                              = -2;
+   sw -> U                              = -10;
+   sw -> V                              = -2;
    sw -> P                              = 0.0;
    sw -> S				= 1;
    sw -> I 				= 1;
@@ -74,7 +78,7 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> q                              = 5;
    args = 0;
 
-   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:S:I:D:f:g:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
+   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:f:g:S:I:D:U:V:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
     {
 
       switch ( opt )
@@ -117,6 +121,26 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
 	   args++;
            break;
 
+	  case 'f':
+           val = strtol ( optarg, &ep, 10 );
+           if ( optarg == ep )
+            {
+              return ( 0 );
+            }
+           sw -> f = val;
+	   args++;
+           break;
+
+          case 'g':
+           val = strtol ( optarg, &ep, 10 );
+           if ( optarg == ep )
+            {
+              return ( 0 );
+            }
+           sw -> g = val;
+	   args++;
+           break;
+
 	case 'S':
            val = strtol ( optarg, &ep, 10 );
            if ( optarg == ep )
@@ -144,22 +168,22 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
            sw -> D = val;
            break;
 
-	case 'f':
+	case 'V':
            val = strtol ( optarg, &ep, 10 );
            if ( optarg == ep )
             {
               return ( 0 );
             }
-           sw -> f = val;
+           sw -> V = val;
            break;
 
-	case 'g':
+	case 'U':
            val = strtol ( optarg, &ep, 10 );
            if ( optarg == ep )
             {
               return ( 0 );
             }
-           sw -> g = val;
+           sw -> U = val;
            break;
 
          case 'O':
@@ -194,7 +218,7 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
        }
     }
 
-   if ( args < 4)
+   if ( args < 5 )
      {
        usage ();
        exit ( 1 );
@@ -219,10 +243,11 @@ void usage ( void )
    fprintf ( stdout, " Optional:\n" ); 
    fprintf ( stdout, "  -f, --score-insertion       <int>     Score of inserting a character in alignment. Default: -4.\n" );
    fprintf ( stdout, "  -g, --score-deletion        <int>     Score of deleting a character in alignment. Default: -4.\n" );
-   fprintf ( stdout, "  -O, --gap-open              <int>     Affine gap open penalty. Default: -10.\n" );
-   fprintf ( stdout, "  -E, --gap-extend            <int>     Affine gap extension penalty. Default: -2.\n" );
-   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking a block\n"
-		     "                                        percentage of the ends.\n" );
+   fprintf ( stdout, "  -O, --gap-open-pairwise     <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.\n" );
+   fprintf ( stdout, "  -E, --gap-extend-pairwise   <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.\n" );
+   fprintf ( stdout, "  -U, --gap-open-pa           <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
+   fprintf ( stdout, "  -V, --gap-extend-pa         <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
+   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking a block percentage of the ends.\n" );
    fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -I, --cost-insertion        <int>     Cost of insertion for edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -D, --cost-deletion         <int>     Cost of deletion for edit distance. Default: 1.\n");
