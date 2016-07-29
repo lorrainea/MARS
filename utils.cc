@@ -247,7 +247,7 @@ void usage ( void )
    fprintf ( stdout, "  -E, --gap-extend-pairwise   <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.\n" );
    fprintf ( stdout, "  -U, --gap-open-pa           <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
    fprintf ( stdout, "  -V, --gap-extend-pa         <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
-   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking a block percentage of the ends.\n" );
+   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.\n" );
    fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -I, --cost-insertion        <int>     Cost of insertion for edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -D, --cost-deletion         <int>     Cost of deletion for edit distance. Default: 1.\n");
