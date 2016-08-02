@@ -598,10 +598,10 @@ unsigned int alignAllocation( double ** &PM, double ** &SM, int ** &TB, vector<c
 
 	SM[0][0] = 0;
 	for ( int i = 1; i < m +1 ; i++ )
-	SM[i][0] = i * sw . g;
+	SM[i][0] = i * sw . O;
 
 	for ( int j = 1; j < n + 1 ; j++ )
-	SM[0][j] = j * sw . f;
+	SM[0][j] = j * sw . E;
 
 	double prob = 1.0/profileA->size();
 
@@ -630,8 +630,8 @@ unsigned int alignmentScore(vector<unsigned char *> * profileA, vector<unsigned 
 		for(int j=1; j<n+1; j++)
 		{
 			u = SM[i-1][j-1] + probScore( characters, i, j, PM, profileA, profileB, sw);
-			v = SM[i-1][j] + sw . g; // gap in sequence
-			w = SM[i][j-1] + sw . f; // gap in profile
+			v = SM[i-1][j] + sw . O; // gap in sequence
+			w = SM[i][j-1] + sw . E; // gap in profile
 
 			SM[i][j] = MAX3 ( u, v, w );
 			
@@ -737,9 +737,9 @@ unsigned int alignPairs(unsigned char * x, unsigned char * y, unsigned char ** s
 
 
 	if( sw . O != sw . E )
-		int score = globalAlignment(align, Score<int, Simple>(0, sw.g, sw. E, sw.O), AffineGaps() );
+		int score = globalAlignment(align, Score<int, Simple>(0, -1, sw. E, sw.O), AffineGaps() );
 	else
-		int score = globalAlignment(align, Score<int, Simple>(0, sw . f, sw . g));
+		int score = globalAlignment(align, Score<int, Simple>(0, sw . O, sw . E));
 
 	unsigned xLength = length(row(align, 0)); //sequence x in alignment
 	unsigned yLength = length(row(align, 1)); //sequence y in alignment
@@ -844,11 +844,12 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, dou
 
 	for ( int i = 0; i < m + 1; i++ )
 	{
-		DM[i] =  m * sw . g;
+		DM[i] =  m * -1;
 	}
+
 	for ( int j = 0; j < n + 1; j++ )
 	{
-		IM[j] = n * sw . f;
+		IM[j] = n * -1;
 	}
 
 	TB[0][0] = 0;

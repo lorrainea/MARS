@@ -84,12 +84,12 @@ unsigned int nw_ag ( unsigned char * p, unsigned int m, unsigned char * t, unsig
         
    	for ( i = 0; i < m + 1; i++ )
 	{
-		D[i] = m * sw . g;
+		D[i] = m * -1;
 	}
 
 	for ( j = 0; j < n + 1; j++ )
 	{
-		I[j] = n * sw . f;
+		I[j] = n * -1;
 	}
 
 	T[0][0] = 0;
@@ -148,8 +148,8 @@ unsigned int nw_allocation( unsigned int m, unsigned int n, int ** &T )
 unsigned int nw ( unsigned char * p, unsigned int m, unsigned char * t, unsigned int n, struct TSwitch  sw, int * score, int ** &T )
 {
 	init_substitution_score_tables ();
-	int ins = sw . f;
-	int del = sw . g;
+	int ins = sw . O;
+	int del = sw . E;
 	int i, j;
 	
    	for ( i = 0; i < m + 1; i++ )

@@ -42,8 +42,6 @@ static struct option long_options[] =
    { "cost-substitution",	optional_argument, NULL, 'S' },
    { "cost-insertion",		optional_argument, NULL, 'I' },
    { "cost-deletion",		optional_argument, NULL, 'D' },
-   { "score-insertion-a",     	optional_argument, NULL, 'f' },
-   { "score-insertion-b",     	optional_argument, NULL, 'g' },
    { "help",                    no_argument,       NULL, 'h' },
    { NULL,                      0,                 NULL,  0  }
  };
@@ -72,13 +70,11 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> S				= 1;
    sw -> I 				= 1;
    sw -> D				= 1;
-   sw -> f				= -4;
-   sw -> g				= -4;
    sw -> l                              = 50;
    sw -> q                              = 5;
    args = 0;
 
-   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:f:g:S:I:D:U:V:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
+   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:S:I:D:U:V:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
     {
 
       switch ( opt )
@@ -118,26 +114,6 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
               return ( 0 );
             }
            sw -> q = val;
-	   args++;
-           break;
-
-	  case 'f':
-           val = strtol ( optarg, &ep, 10 );
-           if ( optarg == ep )
-            {
-              return ( 0 );
-            }
-           sw -> f = val;
-	   args++;
-           break;
-
-          case 'g':
-           val = strtol ( optarg, &ep, 10 );
-           if ( optarg == ep )
-            {
-              return ( 0 );
-            }
-           sw -> g = val;
 	   args++;
            break;
 
@@ -249,8 +225,6 @@ void usage ( void )
    fprintf ( stdout, "  -I, --cost-insertion        <int>     Cost of insertion for edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -D, --cost-deletion         <int>     Cost of deletion for edit distance. Default: 1.\n");
    fprintf ( stdout, " Multiple sequence comparison with affine gaps:\n" ); 
-   fprintf ( stdout, "  -f, --score-insertion-a     <int>     Score of inserting a gap into profile A. Default: -4.\n" );
-   fprintf ( stdout, "  -g, --score-insertion-b     <int>     Score of inserting a gap into profile B/sequence B. Default: -4.\n" );
    fprintf ( stdout, "  -U, --gap-open-pa           <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
    fprintf ( stdout, "  -V, --gap-extend-pa         <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
  }
