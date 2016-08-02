@@ -737,22 +737,9 @@ unsigned int alignPairs(unsigned char * x, unsigned char * y, unsigned char ** s
 
 
 	if( sw . O != sw . E )
-	{	
-		//if( sw . matrix == 1)
-		//	int score = globalAlignment(align, Blosum62(sw.E, sw.O), AffineGaps());
-		//else int score = globalAlignment(align, DNAMatrix(sw.E, sw.O), AffineGaps());	
-		
-		int score = globalAlignment(align, Score<int, Simple>(0, sw.g, sw. E, sw.O), AffineGaps() ); //use nw_ag if O < 0
-		
-		//int score = globalAlignment(align, Score<int, Simple>(1, -1, sw . g)); 
-	}
+		int score = globalAlignment(align, Score<int, Simple>(0, sw.g, sw. E, sw.O), AffineGaps() );
 	else
-	{
 		int score = globalAlignment(align, Score<int, Simple>(0, sw . f, sw . g));
-		//if( sw . matrix == 1)
-		//	int score = globalAlignment(align, Blosum62(sw.E, sw.O), DynamicGaps());
-		//else int score = globalAlignment(align, DNAMatrix(sw.E, sw.O), DynamicGaps());	
-	}
 
 	unsigned xLength = length(row(align, 0)); //sequence x in alignment
 	unsigned yLength = length(row(align, 1)); //sequence y in alignment
