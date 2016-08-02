@@ -279,13 +279,12 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 
 
 	int sub = sw . S;
-	int ins = sw . I; 
-	int del = sw . D;
+	int indel = sw . I; 
 
-	if (  ins == 1 && del == 1 && sub == 1 )
+	if (  indel == 1 && sub == 1 )
 		editDistanceMyers( x_final_rotation, y, m, n, distance );
 	else
-		editDistance( x_final_rotation, y, m, n, distance, sub, ins, del ); 
+		editDistance( x_final_rotation, y, m, n, distance, sub, indel ); 
 
 	free ( X );
 	free ( Y );
@@ -312,7 +311,7 @@ int editDistanceMyers( unsigned char * xInput, unsigned char * yInput, int mInpu
 	return EXIT_SUCCESS;
 }
 
-unsigned int editDistance(unsigned char * xInput, unsigned char * yInput, int mInput, int nInput, unsigned int * distance, int sub, int ins, int del )
+unsigned int editDistance(unsigned char * xInput, unsigned char * yInput, int mInput, int nInput, unsigned int * distance, int sub, int indel )
 {
 	unsigned int x, y, lastdiag, olddiag;
 	unsigned int match = 0;
@@ -328,7 +327,7 @@ unsigned int editDistance(unsigned char * xInput, unsigned char * yInput, int mI
         	for (y = 1, lastdiag = x-1; y <= mInput; y++) 
 		{
 			olddiag = column[y];
-            		column[y] = MIN3(column[y] + ins, column[y-1] + del, lastdiag + (xInput[y-1] == yInput[x-1] ? match : sub));
+            		column[y] = MIN3(column[y] + indel, column[y-1] + indel, lastdiag + (xInput[y-1] == yInput[x-1] ? match : sub));
             		lastdiag = olddiag;
         	}
     	}

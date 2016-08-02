@@ -34,14 +34,13 @@ static struct option long_options[] =
    { "output-file",             required_argument, NULL, 'o' },
    { "block-length",            required_argument, NULL, 'l' },
    { "q-length",                required_argument, NULL, 'q' },
-   { "gap-open-pairwise",       optional_argument, NULL, 'O' },
-   { "gap-extend-pairwise",     optional_argument, NULL, 'E' },
-   { "gap-open-pa",             optional_argument, NULL, 'U' },
-   { "gap-extend-pa",           optional_argument, NULL, 'V' },
-   { "refine-blocks",           optional_argument, NULL, 'P' },
+   { "gap-open-seq",            optional_argument, NULL, 'O' },
+   { "gap-extend-seq",          optional_argument, NULL, 'E' },
+   { "gap-open-pro",            optional_argument, NULL, 'U' },
+   { "gap-extend-pro",          optional_argument, NULL, 'V' },
+   { "refine-blocks",           required_argument, NULL, 'P' },
    { "cost-substitution",	optional_argument, NULL, 'S' },
-   { "cost-insertion",		optional_argument, NULL, 'I' },
-   { "cost-deletion",		optional_argument, NULL, 'D' },
+   { "cost-indels",		optional_argument, NULL, 'I' },
    { "help",                    no_argument,       NULL, 'h' },
    { NULL,                      0,                 NULL,  0  }
  };
@@ -69,7 +68,6 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> P                              = 0.0;
    sw -> S				= 1;
    sw -> I 				= 1;
-   sw -> D				= 1;
    sw -> l                              = 50;
    sw -> q                              = 5;
    args = 0;
@@ -133,15 +131,6 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
               return ( 0 );
             }
            sw -> I = val;
-           break;
-
-	case 'D':
-           val = strtol ( optarg, &ep, 10 );
-           if ( optarg == ep )
-            {
-              return ( 0 );
-            }
-           sw -> D = val;
            break;
 
 	case 'V':
@@ -208,25 +197,25 @@ Usage of the tool
 */
 void usage ( void )
  {
-   fprintf ( stdout, " Usage: MARS <options>\n" );
+
+	
+   fprintf ( stdout, " Usage: mars <options>\n" );
    fprintf ( stdout, " Standard:\n" );
    fprintf ( stdout, "  -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.\n" );
    fprintf ( stdout, "  -i, --input-file            <str>     MultiFASTA input filename.\n" );
-   fprintf ( stdout, "  -o, --output-file           <str>     Output filename with rotated sequences.\n" );
-   fprintf ( stdout, " Sequence comparison parameters:\n" );
-   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length.\n");
-   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block.\n");   
+   fprintf ( stdout, "  -o, --output-file           <str>     Output filename with rotated sequences.\n" );   
+   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length. Default: 5.\n");
+   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block. Default: 50.\n");   
    fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Default: 1.0.\n" );
-   fprintf ( stdout, " Pairwise sequence comparison with affine gaps:\n" );
-   fprintf ( stdout, "  -O, --gap-open-pairwise     <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.\n" );
-   fprintf ( stdout, "  -E, --gap-extend-pairwise   <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.\n" );   
-   fprintf ( stdout, " Pairwise edit distance parameters:\n" );
-   fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for edit distance. Default: 1.\n" );
-   fprintf ( stdout, "  -I, --cost-insertion        <int>     Cost of insertion for edit distance. Default: 1.\n" );
-   fprintf ( stdout, "  -D, --cost-deletion         <int>     Cost of deletion for edit distance. Default: 1.\n");
-   fprintf ( stdout, " Multiple sequence comparison with affine gaps:\n" ); 
-   fprintf ( stdout, "  -U, --gap-open-pa           <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
-   fprintf ( stdout, "  -V, --gap-extend-pa         <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
+   fprintf ( stdout, " Cyclic edit distance computation between pairs of sequences:\n" );   
+   fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.\n" );
+   fprintf ( stdout, "  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.\n" );
+   fprintf ( stdout, " Refining pairwise rotations:\n" );
+   fprintf ( stdout, "  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.\n" );
+   fprintf ( stdout, "  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.\n" );   
+   fprintf ( stdout, " Progressive alignment of profiles:\n" ); 
+   fprintf ( stdout, "  -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
+   fprintf ( stdout, "  -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
  }
 
 double gettime( void )
