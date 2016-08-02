@@ -42,8 +42,8 @@ static struct option long_options[] =
    { "cost-substitution",	optional_argument, NULL, 'S' },
    { "cost-insertion",		optional_argument, NULL, 'I' },
    { "cost-deletion",		optional_argument, NULL, 'D' },
-   { "score-insertion",     	optional_argument, NULL, 'f' },
-   { "score-deletion",     	optional_argument, NULL, 'g' },
+   { "score-insertion-a",     	optional_argument, NULL, 'f' },
+   { "score-insertion-b",     	optional_argument, NULL, 'g' },
    { "help",                    no_argument,       NULL, 'h' },
    { NULL,                      0,                 NULL,  0  }
  };
@@ -232,26 +232,27 @@ Usage of the tool
 */
 void usage ( void )
  {
-   fprintf ( stdout, " Usage: bear <options>\n" );
-   fprintf ( stdout, " Standard (Mandatory):\n" );
-   fprintf ( stdout, "  -a, --alphabet              <str>     `DNA' for nucleotide  sequences  or `PROT' for\n"
-                     "                                        protein  sequences. \n" );
+   fprintf ( stdout, " Usage: MARS <options>\n" );
+   fprintf ( stdout, " Standard:\n" );
+   fprintf ( stdout, "  -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.\n" );
    fprintf ( stdout, "  -i, --input-file            <str>     MultiFASTA input filename.\n" );
    fprintf ( stdout, "  -o, --output-file           <str>     Output filename with rotated sequences.\n" );
+   fprintf ( stdout, " Sequence comparison parameters:\n" );
    fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length.\n");
-   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block.\n\n");
-   fprintf ( stdout, " Optional:\n" ); 
-   fprintf ( stdout, "  -f, --score-insertion       <int>     Score of inserting a character in alignment. Default: -4.\n" );
-   fprintf ( stdout, "  -g, --score-deletion        <int>     Score of deleting a character in alignment. Default: -4.\n" );
+   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block.\n");   
+   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Default: 1.0.\n" );
+   fprintf ( stdout, " Pairwise sequence comparison with affine gaps:\n" );
    fprintf ( stdout, "  -O, --gap-open-pairwise     <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.\n" );
-   fprintf ( stdout, "  -E, --gap-extend-pairwise   <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.\n" );
-   fprintf ( stdout, "  -U, --gap-open-pa           <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
-   fprintf ( stdout, "  -V, --gap-extend-pa         <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
-   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.\n" );
+   fprintf ( stdout, "  -E, --gap-extend-pairwise   <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.\n" );   
+   fprintf ( stdout, " Pairwise edit distance parameters:\n" );
    fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -I, --cost-insertion        <int>     Cost of insertion for edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -D, --cost-deletion         <int>     Cost of deletion for edit distance. Default: 1.\n");
-
+   fprintf ( stdout, " Multiple sequence comparison with affine gaps:\n" ); 
+   fprintf ( stdout, "  -f, --score-insertion-a     <int>     Score of inserting a gap into profile A. Default: -4.\n" );
+   fprintf ( stdout, "  -g, --score-insertion-b     <int>     Score of inserting a gap into profile B/sequence B. Default: -4.\n" );
+   fprintf ( stdout, "  -U, --gap-open-pa           <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
+   fprintf ( stdout, "  -V, --gap-extend-pa         <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
  }
 
 double gettime( void )
