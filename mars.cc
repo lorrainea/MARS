@@ -218,6 +218,13 @@ int main(int argc, char **argv)
 	for ( int i = 0; i < num_seqs; i++ )
 	{
 		unsigned int m = strlen ( ( char * ) seq[i] );
+
+		if( sw . P * sw . l * 3 > m )
+		{
+			fprintf( stderr, " Error: P is too large!\n" );
+			exit( EXIT_FAILURE );
+		}
+		
 		if ( ( D[i] = ( TPOcc * ) calloc ( ( num_seqs + 1 ) , sizeof( TPOcc ) ) ) == NULL )
 		{
 			fprintf( stderr, " Error: Cannot allocate memory!\n" );

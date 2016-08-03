@@ -204,9 +204,9 @@ void usage ( void )
    fprintf ( stdout, "  -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.\n" );
    fprintf ( stdout, "  -i, --input-file            <str>     MultiFASTA input filename.\n" );
    fprintf ( stdout, "  -o, --output-file           <str>     Output filename with rotated sequences.\n" );   
-   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length. Default: 5.\n");
-   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block. Default: 50.\n");   
-   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Default: 1.0.\n" );
+   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length.\n");
+   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block.\n");   
+   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.\n" );
    fprintf ( stdout, " Cyclic edit distance computation between pairs of sequences:\n" );   
    fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.\n" );
