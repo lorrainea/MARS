@@ -2,20 +2,18 @@ Pre-installation Instructions
 =============================
 
    This installation requires the pre-installation of a C++ compiler, 
-and the libraries: Aho-Corasick Library and libdatrie.
+and the libraries: sdsl-lite and SeqAn.
 
 For Linux, you can install these libraries via
 
  $ ./pre-install.sh 
-
- $ make -f Makefile
 
 Basic Instructions
 ==================
 
    The shell command `make -f Makefile' should compile this program. 
    
-After compilation the binary `bear' will be created in the working 
+After compilation the binary `mars' will be created in the working 
 directory, e.g. you may call it from this directory via
 
  S ./mars -h
