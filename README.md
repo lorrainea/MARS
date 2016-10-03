@@ -13,20 +13,4 @@ Input: A set of sequences in FASTA format. The input file is specified using the
 
 Output: The set of refined (via cyclic shifts) sequences with no gaps added in FASTA format. The output file is specified using the -o option. This output file can then be used as input of the preferred MSA program to obtain the final alignment.
 
-Usage: mars <options>
- Standard:
-  -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.
-  -i, --input-file            <str>     MultiFASTA input filename.
-  -o, --output-file           <str>     Output filename with rotated sequences.
-  -q, --q-length              <int>     The q-gram length.
-  -l, --block-length          <int>     The length of each block.
-  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.
- Cyclic edit distance computation between pairs of sequences:
-  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
-  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.
- Refining pairwise rotations:
-  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.
-  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.
- Progressive alignment of profiles:
-  -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.
-  -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.
+ 
