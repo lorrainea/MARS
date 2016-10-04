@@ -10,7 +10,7 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 
 <b>INPUT</b>: A set of sequences in FASTA format. The input file is specified using the <b>-i</b> option. Typical input sequences include mitochondrial DNA, viroid, viral or other genomes, which have a circular molecular structure. 
 
-<b>OUTPUT</b>: The set of refined (cyclic shifted) sequences with no gaps added in FASTA format. The output file is specified using the <b>-o</b> option. This output file can then be used as input to the preferred MSA program to obtain the final alignment.
+<b>OUTPUT</b>: The set of refined (cyclically shifted) sequences with no gaps added in FASTA format. The output file is specified using the <b>-o</b> option. This output file can then be used as input to the preferred MSA program to obtain the final alignment.
 
 <b>Options</b>: Type <em>./mars -h</em>
 
