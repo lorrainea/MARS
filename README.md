@@ -12,5 +12,7 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 
 <b>OUTPUT</b>: The set of refined (via cyclic shifts) sequences with no gaps added in FASTA format. The output file is specified using the -o option. This output file can then be used as input to the preferred MSA program to obtain the final alignment.
 
+<b>Options</b>: Type ./mars -h
+
 <b>License</b>: GNU GPLv3 License; Copyright (C) 2016 Lorraine A.K. Ayad and Solon P. Pissis.
 
