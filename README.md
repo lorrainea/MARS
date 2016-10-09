@@ -14,7 +14,7 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 
 <b>Options</b>: Type <em>./mars -h</em>
 
-<b>Example</b>: For a typical run, see file EXAMPLE.
+<b>Example</b>: For a typical run, see file EXAMPLES.
 
 <b>License</b>: GNU GPLv3 License; Copyright (C) 2016 Lorraine A.K. Ayad and Solon P. Pissis.
 
