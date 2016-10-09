@@ -16,4 +16,4 @@ To understand the purpose and usage of MARS please execute the following steps:
 4. Upload the file ./data/10.gappy.output.fasta on http://www.ebi.ac.uk/Tools/msa/clustalo/. 
    Set the alphabet to DNA and the output format to PHYLIP. Then hit SUBMIT.
 
-5. Inspect the produced MSA and contrast it to the MSA produced by Step 2.
+5. Inspect the produced MSA and contrast it to the MSA produced by Step 1.
