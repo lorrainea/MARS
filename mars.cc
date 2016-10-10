@@ -70,12 +70,12 @@ int main(int argc, char **argv)
 
 		if ( sw . P < 0 || sw . P >= 5.1 )
 		{
-			fprintf ( stderr, " Error: The optional percentage flag should be in the range of 0 to 5.\n" );
+			fprintf ( stderr, " Error: The number of refinement blocks to check at each end should be in the range 0 to 5.\n" );
 			return ( 1 );
 		}
 		if ( sw . q < 2 || sw . q >= sw . l )
 		{
-			fprintf ( stderr, " Error: The length of the q-gram must be reasonable.\n" );
+			fprintf ( stderr, " Error: The length of the q-gram must be smaller or equal to the block length.\n" );
 			return ( 1 );
 		}
 	
