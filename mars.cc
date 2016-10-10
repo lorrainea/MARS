@@ -73,9 +73,14 @@ int main(int argc, char **argv)
 			fprintf ( stderr, " Error: The number of refinement blocks to check at each end should be in the range 0 to 5.\n" );
 			return ( 1 );
 		}
-		if ( sw . q < 2 || sw . q >= sw . l )
+		if ( sw . q < 2 )
 		{
-			fprintf ( stderr, " Error: The length of the q-gram must be smaller or equal to the block length.\n" );
+			fprintf ( stderr, " Error: The q-gram length is too small.\n" );
+			return ( 1 );	
+		}
+		if( sw . q >= sw . l )
+		{
+			fprintf ( stderr, " Error: The length of the q-gram must be smaller than the block length.\n" );
 			return ( 1 );
 		}
 	
