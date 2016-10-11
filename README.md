@@ -12,7 +12,30 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 
 <b>OUTPUT</b>: The set of refined (cyclically shifted) sequences with no gaps added in FASTA format. The output file is specified using the <b>-o</b> option. This output file can then be used as input to the preferred MSA program to obtain the final alignment.
 
-<b>Options</b>: Type <em>./mars -h</em>
+<b>Usage</b>: 
+
+```
+
+ Usage: mars <options>
+ Standard (Mandatory):
+  -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.
+  -i, --input-file            <str>     MultiFASTA input filename.
+  -o, --output-file           <str>     Output filename with rotated sequences.
+  -q, --q-length              <int>     The q-gram length.
+  -l, --block-length          <int>     The length of each block.
+  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.
+ Optional:
+ Cyclic edit distance computation between pairs of sequences:
+  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
+  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.
+ Refining pairwise rotations:
+  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.
+  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.
+ Progressive alignment of profiles:
+  -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.
+  -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.
+
+```
 
 <b>Example</b>: For a typical run, see file EXAMPLES.
 
