@@ -64,23 +64,23 @@ int main(int argc, char **argv)
                 else if ( ! strcmp ( "PROT", sw . alphabet ) )  { alphabet = ( char * ) PROT; sw . matrix = 1; }
                 else
                 {
-                        fprintf ( stderr, " Error: alphabet argument a should be `DNA' for nucleotide sequences or `PROT' for protein sequences!\n" );
+                        fprintf ( stderr, " Error: The alphabet value should be `DNA' for nucleotide sequences or `PROT' for protein sequences!\n" );
                         return ( 1 );
                 }
 
-		if ( sw . P < 0 || sw . P >= 5.1 )
+		if ( sw . P <= 0 )
 		{
-			fprintf ( stderr, " Error: The number of refinement blocks to check at each end should be in the range 0 to 5.\n" );
+			fprintf ( stderr, " Error: The value of parameter P must be greater than 0!\n" );
 			return ( 1 );
 		}
 		if ( sw . q < 2 )
 		{
-			fprintf ( stderr, " Error: The q-gram length is too small.\n" );
+			fprintf ( stderr, " Error: The q-gram length must be greater than 1!\n" );
 			return ( 1 );	
 		}
 		if( sw . q >= sw . l )
 		{
-			fprintf ( stderr, " Error: The length of the q-gram must be smaller than the block length.\n" );
+			fprintf ( stderr, " Error: The q-gram length must be smaller than the block length!\n" );
 			return ( 1 );
 		}
 	
@@ -226,7 +226,7 @@ int main(int argc, char **argv)
 
 		if( sw . P * sw . l * 3 > m )
 		{
-			fprintf( stderr, " Error: P is too large!\n" );
+			fprintf( stderr, " Error: The value of parameter P is too large!\n" );
 			exit( EXIT_FAILURE );
 		}
 		
@@ -246,7 +246,7 @@ int main(int argc, char **argv)
 
 			if ( sw . l > m - sw . q + 1  || sw . l > n - sw . q + 1 )
 			{
-				fprintf( stderr, " Error: Illegal block length.\n" );
+				fprintf( stderr, " Error: Illegal block length!\n" );
 				exit ( 1 );
 			}
 
