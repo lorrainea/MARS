@@ -12,8 +12,6 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 
 <b>OUTPUT</b>: The set of refined (cyclically shifted) sequences with no gaps added in FASTA format. The output file is specified using the <b>-o</b> option. This output file can then be used as input to the preferred MSA program to obtain the final alignment.
 
-<b>Usage</b>: 
-
 ```
 
  Usage: mars <options>
