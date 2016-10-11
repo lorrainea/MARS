@@ -17,11 +17,11 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
  Usage: mars <options>
  Standard (Mandatory):
   -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.
-  -i, --input-file            <str>     MultiFASTA input filename.
-  -o, --output-file           <str>     Output filename with rotated sequences.
-  -q, --q-length              <int>     The q-gram length.
-  -l, --block-length          <int>     The length of each block.
-  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.
+  -i, --input-file            <str>     MultiFASTA input filename with sequences.
+  -o, --output-file           <str>     Output filename with refined (cyclically shifted) sequences.
+  -q, --q-length              <int>     The q-gram length. Typical: 5.
+  -l, --block-length          <int>     The length of each block. Typical: 25.
+  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Typical: 1.5.
  Optional:
  Cyclic edit distance computation between pairs of sequences:
   -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
