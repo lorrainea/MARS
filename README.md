@@ -27,11 +27,11 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
   -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
   -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.
  Refining pairwise rotations:
-  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.
-  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.
+  -O, --gap-open-seq          <int>     Gap open penalty in pairwise sequence alignment. Default: -10.
+  -E, --gap-extend-seq        <int>     Gap extension penalty in pairwise sequence alignment. Default: -2.
  Progressive alignment of profiles:
-  -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.
-  -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.
+  -U, --gap-open-pro          <int>     Gap open penalty in progressive alignment of profiles. Default: -10.
+  -V, --gap-extend-pro        <int>     Gap extension penalty in progressive alignment of profiles. Default: -2.
 
 ```
 
