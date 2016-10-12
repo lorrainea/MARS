@@ -215,8 +215,8 @@ void usage ( void )
    fprintf ( stdout, "  -O, --gap-open-seq          <int>     Gap open penalty in pairwise sequence alignment. Default: -10.\n" );
    fprintf ( stdout, "  -E, --gap-extend-seq        <int>     Gap extension penalty in pairwise sequence alignment. Default: -2.\n" );   
    fprintf ( stdout, " Progressive alignment of profiles:\n" ); 
-   fprintf ( stdout, "  -U, --gap-open-pro          <int>     Gap open penalty in progressive alignment of profiles. Default: -10.\n" );
-   fprintf ( stdout, "  -V, --gap-extend-pro        <int>     Gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
+   fprintf ( stdout, "  -U, --gap-open-pro          <int>     Gap open penalty in alignment of profiles. Default: -10.\n" );
+   fprintf ( stdout, "  -V, --gap-extend-pro        <int>     Gap extension penalty in alignment of profiles. Default: -2.\n" );
  }
 
 double gettime( void )
