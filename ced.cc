@@ -49,7 +49,7 @@ int delta ( char a, char b, struct TSwitch sw )
  }
 
 
-unsigned int nw_ag_allocation( unsigned int m, unsigned int n, int * &I, int * &D, int ** &T )
+unsigned int nw_ag_allocation( unsigned int m, unsigned int n, int ** &I, int ** &D, int ** &T )
 {
 	int i;
 
@@ -67,29 +67,53 @@ unsigned int nw_ag_allocation( unsigned int m, unsigned int n, int * &I, int * &
                 }
         }
 	
-	I = ( int * ) calloc ( ( n + 1 ) , sizeof( int ) );
-	
-	D = ( int * ) calloc ( ( m + 1 ) , sizeof( int ) );
+	if ( ( I = ( int ** ) calloc ( ( m + 1 ) , sizeof( int * ) ) ) == NULL )
+        {
+                fprintf( stderr, " Error: I could not be allocated!\n");
+                return ( 0 );
+        }
+        for ( i = 0; i < m + 1; i ++ )
+        {
+                if ( ( I[i] = ( int * ) calloc ( ( n + 1 ) , sizeof( int ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: I could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
+	if ( ( D = ( int ** ) calloc ( ( m + 1 ) , sizeof( int * ) ) ) == NULL )
+        {
+                fprintf( stderr, " Error: D could not be allocated!\n");
+                return ( 0 );
+        }
+        for ( i = 0; i < m + 1; i ++ )
+        {
+                if ( ( D[i] = ( int * ) calloc ( ( n + 1 ) , sizeof( int ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: D could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
 
 	return EXIT_SUCCESS;
 }
 
 
-unsigned int nw_ag ( unsigned char * p, unsigned int m, unsigned char * t, unsigned int n, struct TSwitch  sw, int * score, int * &I, int * &D, int ** &T)
+unsigned int nw_ag ( unsigned char * p, unsigned int m, unsigned char * t, unsigned int n, struct TSwitch  sw, int * score, int ** &I, int ** &D, int ** &T)
 {
 	int i, j;
 	int g = sw . O;
 	int h = sw . E;
 	int u, v, w;
         
-   	for ( i = 0; i < m + 1; i++ )
+        for ( i = 0; i < m + 1; i++ )
 	{
-		D[i] = m * -1;
+		D[i][0] = m * -1;
+		I[i][0] = m * -1;
 	}
-
 	for ( j = 0; j < n + 1; j++ )
 	{
-		I[j] = n * -1;
+		D[0][j] = n * -1;
+		I[0][j] = n * -1;
 	}
 
 	T[0][0] = 0;
@@ -106,11 +130,11 @@ unsigned int nw_ag ( unsigned char * p, unsigned int m, unsigned char * t, unsig
 	{
         	for( j = 1; j < n + 1; j++ )
         	{
-			D[i] = MAX2 ( D[i - 1] + h, T[i - 1][j] + g );
-			u = D[i];
+			D[i][j] = MAX2 ( D[i - 1][j] + h, T[i - 1][j] + g );
+			u = D[i][j];
 
-			I[j] = MAX2 ( I[j - 1] + h, T[i][j - 1] + g );
-			v = I[j];
+			I[i][j] = MAX2 ( I[i][j - 1] + h, T[i][j - 1] + g );
+			v = I[i][j];
 
 			w = T[i - 1][j - 1] + delta ( t[j - 1], p[i - 1], sw );
 
@@ -176,8 +200,8 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 {
 	unsigned int rot = *rotation;
 
-	int * I;
-	int * D;
+	int ** I;
+	int ** D;
 	int ** T;
 
 	unsigned int m = strlen ( ( char * ) x );
@@ -247,6 +271,12 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 
 	if( sw . O != sw . E )
 	{
+
+		for ( int j = 0; j < m + 1; j ++ )
+		{
+			free ( I[j] );
+			free ( D[j] );
+		}
 		free ( I );
 		free ( D );
 	}

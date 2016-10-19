@@ -69,6 +69,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 		if( isLeaf( njTree, children[0] ) == 1 && isLeaf( njTree, children[1] ) == 1 ) // two sequences
 		{
 			int m = strlen( ( char * ) seq[ children[0] ] );
+			int n = strlen( ( char * ) seq[ children[1] ] );
 	
 			R[ children[0] ] = D[ children[0] ][ children[1] ] . rot; // obtain first rotation for two sequences (already refined)
 
@@ -78,10 +79,64 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 
 			create_rotation( seq[ children[0] ] , R[ children[0] ], rotatedSeq );
 
-			alignPairs ( rotatedSeq, seq[ children[1] ], sequences, sw, children[0], children[1] ); // find new alignments
+			vector<unsigned char * > * profileA = new vector<unsigned char *>();
+			vector<unsigned char * > * profileB = new vector<unsigned char *>();
 
+			vector<int> * profileAPos = new vector<int>();
+			vector<int> * profileBPos = new vector<int>();
+
+			profileA->push_back( rotatedSeq );
+			profileB->push_back( seq[ children[1] ] );
+
+	       		profileAPos->push_back( children[0] );
+	       		profileBPos->push_back( children[1] );
+	   		
+			int ** TB;
+			double ** SM;
+
+			if( sw . O != sw . E )
+			{
+				double ** IM;
+				double ** DM;
+	
+ 				pairAllocation_ag( SM, TB, IM, DM, profileA, profileB , sw );
+				alignPairs_ag(profileA, profileB , sw, sequences, TB, SM, IM,  DM);
+
+				for(int i=0; i<m+1; i++)
+				{
+					free( SM[i] );
+					free( DM[i] );
+					free( IM[i] );
+				
+				}	
+
+				free( IM );
+				free( DM );	
+			}
+			else 
+			{	
+	
+				pairAllocation( SM , TB, profileA, profileB, sw );
+				alignPairs(profileA, profileB , sw, sequences, TB, SM);
+	
+			}
+
+			alignSequences( profileA, profileB, profileAPos, profileBPos, sequences , TB);
+
+
+			for(int i=0; i<m+1; i++)
+			{
+				free( TB[i] );
+				free( SM[i] );
+			}
+				
+			free( TB );
+			free( SM );
 			free( rotatedSeq );
-
+			delete( profileA );
+			delete( profileB );
+			delete( profileAPos );
+			delete( profileBPos );
 		}
 		else 
 		{
@@ -140,7 +195,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 	   		}
 
 			int rot = rotValue;
-			int rs = sw . l * sw . P;
+			int rs =  sw . l * sw . P;
 
 			int gapCountA = 0;
 			int gapCountB = 0;
@@ -217,7 +272,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			if( rs > 0 )
 			{	
 				int ** TB; 
-				double ** SM, ** PM, * IM, * DM;
+				double ** SM, ** PM, ** IM, ** DM;
 			
 				if( sw . U != sw . V )
 					alignAllocation_ag( PM, SM, IM, DM, TB, characters, profileA, profileB, sw );	
@@ -264,8 +319,15 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 					free( TB[j] );
 				}
 				free( TB );
+
 				if( sw . U != sw . V )
 				{
+
+					for(int j=0; j<3 * rs + 1; j++)
+					{
+						free( IM[j] );
+						free( DM[j] );
+					}
 					free( IM );
 					free( DM );
 				}
@@ -311,6 +373,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				final_rot = final_rot + n;
 			}
 			else final_rot = final_rot;
+
 				
 			/* Add the rotation value to the rotation arrays */
 			for(int i =0; i<profileBPos->size(); i ++)
@@ -348,7 +411,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			}
 	
 			int ** TBl;
-			double ** SMl, ** PMl, * IMl, * DMl;
+			double ** SMl, ** PMl, ** IMl, ** DMl;
 
 			if( sw . U != sw . V )
 				alignAllocation_ag( PMl, SMl, IMl, DMl, TBl, characters, profileA, profileB, sw );	
@@ -365,9 +428,15 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 
 			for(int i=0; i<m+ 1; i++)
 				free( SMl[i] );
+	
 
 			if( sw . U != sw . V )
 			{
+				for(int i=0; i<m+ 1; i++)
+				{
+					free( IMl[i] );
+					free( DMl[i] );
+				}
 				free( IMl );
 				free( DMl );
 			}
@@ -506,7 +575,6 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 	
 		sequences[ profileBPos->at(b)][ seqS] = '\0'; 
 	}
-
 	
 	for(int i=0; i<profileA->size(); i++)
 		free( ASequences[i] );
@@ -597,11 +665,14 @@ unsigned int alignAllocation( double ** &PM, double ** &SM, int ** &TB, vector<c
 		TB[0][j] = -1;
 
 	SM[0][0] = 0;
-	for ( int i = 1; i < m +1 ; i++ )
-	SM[i][0] = i * sw . O;
 
-	for ( int j = 1; j < n + 1 ; j++ )
-	SM[0][j] = j * sw . E;
+	SM[1][0] = SM[0][1] = sw . U;
+
+	for ( int i = 2; i < m +1 ; i++ )
+	SM[i][0] = i * sw . V;
+
+	for ( int j = 2; j < n + 1 ; j++ )
+	SM[0][j] = j * sw . V;
 
 	double prob = 1.0/profileA->size();
 
@@ -629,9 +700,9 @@ unsigned int alignmentScore(vector<unsigned char *> * profileA, vector<unsigned 
 	{
 		for(int j=1; j<n+1; j++)
 		{
-			u = SM[i-1][j-1] + probScore( characters, i, j, PM, profileA, profileB, sw);
-			v = SM[i-1][j] + sw . O; // gap in sequence
-			w = SM[i][j-1] + sw . E; // gap in profile
+			u = SM[i-1][j-1] + probScore( characters, i, j, PM, profileA, profileB, sw );
+			v = SM[i-1][j] + sw . U; // gap in sequence
+			w = SM[i][j-1] + sw . U; // gap in profile
 
 			SM[i][j] = MAX3 ( u, v, w );
 			
@@ -674,6 +745,8 @@ double probScore( vector<char> * characters, int i, int j, double ** PM, vector<
 			score = score + ( similarity(  profileB->at(k)[j-1], characters->at(l) , sw ) * PM[l][i-1] ) ; 
 		}
 	}
+
+	score = score / profileB->size() ;
 
 return score;
 }
@@ -718,61 +791,238 @@ int similarity( unsigned char x, unsigned char y, struct TSwitch sw)
 return sim;
 }
 
-unsigned int alignPairs(unsigned char * x, unsigned char * y, unsigned char ** sequences, struct TSwitch sw, int posX, int posY)
+unsigned int pairAllocation( double ** &SM, int ** &TB, vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw)
 {
 
-	typedef String<char> TSequence;
-	typedef Align<TSequence, ArrayGaps> TAlign;
-	typedef Row<TAlign>::Type TRow;
-	typedef Iterator<TRow>::Type TRowIterator;
+	int m  = strlen( ( char * ) profileA->at(0) );
+	int n = strlen( ( char * ) profileB->at(0) );
 
-	TAlign align;
-    	resize(rows(align), 2);
-    	assignSource(row(align, 0), x);
-    	assignSource(row(align, 1), y);
-
-
-	typedef int TValue;
-    	typedef Score<TValue, ScoreMatrix<Dna5, Default> > DNAMatrix;
-
-
-	if( sw . O != sw . E )
-		int score = globalAlignment(align, Score<int, Simple>(0, -1, sw. E, sw.O), AffineGaps() );
-	else
-		int score = globalAlignment(align, Score<int, Simple>(0, sw . O, sw . E));
-
-	unsigned xLength = length(row(align, 0)); //sequence x in alignment
-	unsigned yLength = length(row(align, 1)); //sequence y in alignment
-
-	//iterate through alignment to find new sequence x
-	int pos = 0;
-      	TRowIterator it = iter(row(align, 0), 0);
-        TRowIterator itEnd = iter(row(align, 0), xLength);
-       	while (it != itEnd)
-        {
-           	sequences[posX][pos] = ( ( unsigned char ) value(it) );
-        	++it;
-		++pos;
-    	}
-	sequences[posX][pos] = '\0'; // add new x to sequences
-
-	//iterate through alignment to find new sequence y
-	int pos2 = 0;
-      	TRowIterator it2 = iter(row(align, 1), 0);
-        TRowIterator itEnd2 = iter(row(align, 1), yLength);
-       	while (it2 != itEnd2)
-        {
-         	sequences[posY][pos2] = ( ( unsigned char ) value(it2) );
-           	++it2;
-		++pos2;
+	if ( ( SM = ( double ** ) calloc ( ( m + 1) , sizeof( double * ) ) ) == NULL )
+   	{
+               fprintf( stderr, " Error: SM could not be allocated!\n");
+               return ( 0 );
         }
-	sequences[posY][pos2] = '\0'; // add new y to sequences
 
+        for ( int i = 0; i < m+1; i ++ )
+        {
+		
+                if ( ( SM[i] = ( double * ) calloc ( ( n +1 ) , sizeof( double ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: SM could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
+
+		
+
+	if ( ( TB = ( int ** ) calloc ( ( m + 1 ) , sizeof( int * ) ) ) == NULL )
+	{
+		fprintf( stderr, " Error: TB could not be allocated!\n");
+		return ( 0 );
+	}
+	for ( int i = 0; i < m + 1; i ++ )
+	{
+		if ( ( TB[i] = ( int * ) calloc ( ( n + 1 ) , sizeof( int ) ) ) == NULL )
+		{
+			fprintf( stderr, " Error: TB could not be allocated!\n");
+		  	return ( 0 );
+		}
+	}
+
+
+	TB[0][0] = 0;
+	for(int i=1; i<m+1; i++)
+		TB[i][0] = 1;
+         	
+         for(int j=1; j<n+1; j++)
+		TB[0][j] = -1;
+
+	SM[0][0] = 0;
+	SM[1][0] = SM[0][1] = sw . O;
+
+	for ( int i = 2; i < m +1 ; i++ )
+	SM[i][0] = i * sw . E;
+
+	for ( int j = 2; j < n + 1 ; j++ )
+	SM[0][j] = j * sw . E;
+}
+
+unsigned int pairAllocation_ag( double ** &SM, int ** &TB,  double ** &IM, double ** &DM, vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw)
+{
+
+	int m  = strlen( ( char * ) profileA->at(0) );
+	int n = strlen( ( char * ) profileB->at(0) );
+
+	if ( ( SM = ( double ** ) calloc ( ( m + 1) , sizeof( double * ) ) ) == NULL )
+   	{
+               fprintf( stderr, " Error: SM could not be allocated!\n");
+                return ( 0 );
+        }
+
+        for ( int i = 0; i < m+1; i ++ )
+        {
+		
+                if ( ( SM[i] = ( double * ) calloc ( ( n +1 ) , sizeof( double ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: SM could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
+
+
+	if ( ( TB = ( int ** ) calloc ( ( m + 1 ) , sizeof( int * ) ) ) == NULL )
+	{
+		fprintf( stderr, " Error: TB could not be allocated!\n");
+		return ( 0 );
+	}
+	for ( int i = 0; i < m + 1; i ++ )
+	{
+		if ( ( TB[i] = ( int * ) calloc ( ( n + 1 ) , sizeof( int ) ) ) == NULL )
+		{
+			fprintf( stderr, " Error: TB could not be allocated!\n");
+		  	return ( 0 );
+		}
+	}
+
+	if ( ( IM = ( double ** ) calloc ( ( m + 1 ) , sizeof( double * ) ) ) == NULL )
+        {
+                fprintf( stderr, " Error: IM could not be allocated!\n");
+                return ( 0 );
+        }
+        for ( int i = 0; i < m + 1; i ++ )
+        {
+                if ( ( IM[i] = ( double * ) calloc ( ( n + 1 ) , sizeof( double ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: IM could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
+	if ( ( DM = ( double ** ) calloc ( ( m + 1 ) , sizeof( double * ) ) ) == NULL )
+        {
+                fprintf( stderr, " Error: DM could not be allocated!\n");
+                return ( 0 );
+        }
+        for ( int i = 0; i < m + 1; i ++ )
+        {
+                if ( ( DM[i] = ( double * ) calloc ( ( n + 1 ) , sizeof( double ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: DM could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
+        
+        for ( int i = 0; i < m + 1; i++ )
+	{
+		DM[i][0] = m * -1;
+		IM[i][0] = m * -1;
+	}
+	for ( int j = 0; j < n + 1; j++ )
+	{
+		DM[0][j] = n * -1;
+		IM[0][j] = n * -1;
+	}
+
+
+	TB[0][0] = 0;
+	for(int i=1; i<m+1; i++)
+		TB[i][0] = 1;
+         	
+         for(int j=1; j<n+1; j++)
+		TB[0][j] = -1;
+
+	SM[0][0] = 0;
+	SM[1][0] = SM[0][1] = sw . O;
+
+	for ( int i = 2; i < m +1 ; i++ )
+	SM[i][0] = i * sw . E;
+
+	for ( int j = 2; j < n + 1 ; j++ )
+	SM[0][j] = j * sw . E;
+}
+
+unsigned int alignPairs(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, unsigned char ** sequences, int ** &TB,  double ** &SM )
+{
+
+	int m = strlen( ( char * ) profileA->at(0) );
+	int n = strlen( ( char * ) profileB->at(0) );
+
+
+	double u;
+	double v;
+	double w;
+	for(int i=1; i<m+1; i++) 
+	{
+		for(int j=1; j<n+1; j++)
+		{
+			u = SM[i-1][j-1] + similarity( (unsigned char) profileA->at(0)[i], (unsigned char) profileB->at(0)[j], sw );
+			v = SM[i-1][j] + sw . O; // gap in sequence
+			w = SM[i][j-1] + sw . O; // gap in profile
+
+			SM[i][j] = MAX3 ( u, v, w );
+			
+			if( SM[i][j] == u)
+			{
+				TB[i][j] = 0;
+			}
+			else if(SM[i][j] == w )
+			{
+				TB[i][j] = -1; 
+			}
+			else if( SM[i][j] == v)
+			{
+				TB[i][j] = 1;
+			}
+
+		}
+	}
+
+}
+
+unsigned int alignPairs_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, unsigned char ** sequences, int ** &TB,  double ** &SM,  double ** &IM,  double ** &DM)
+{
+
+	int m = strlen( ( char * ) profileA->at(0) );
+	int n = strlen( ( char * ) profileB->at(0) );
+
+	double u;
+	double v;
+	double w;
+
+	for(int i=1; i<m+1; i++) 
+	{
+		
+		for(int j=1; j<n+1; j++)
+		{
+			u = SM[i-1][j-1] + similarity( (unsigned char) profileA->at(0)[i], (unsigned char) profileB->at(0)[j], sw );
+
+			DM[i][j] = MAX2 ( DM[i - 1][j] + sw . E, SM[i - 1][j] + sw . O );
+			v = DM[i][j];
+
+			IM[i][j] = MAX2 ( IM[i][j - 1] + sw . E, SM[i][j - 1] + sw . O );
+			w = IM[i][j];
+
+			SM[i][j] = MAX3 ( u, v, w );
+			
+			if( SM[i][j] == u)
+			{
+				TB[i][j] = 0;
+			}
+			else if(SM[i][j] == w )
+			{
+				TB[i][j] = -1;
+			}
+			else if( SM[i][j] == v)
+			{
+				TB[i][j] = 1;
+			}
+
+		}
+	}
 
 return 0;
 }
 
-unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, double * &DM, int ** &TB, vector<char> * characters, vector<unsigned char*> * profileA, vector<unsigned char*> * profileB, struct TSwitch sw )
+unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double ** &IM, double ** &DM, int ** &TB, vector<char> * characters, vector<unsigned char*> * profileA, vector<unsigned char*> * profileB, struct TSwitch sw )
 {
 	
 	int m = strlen( ( char * ) profileA->at(0) );
@@ -839,17 +1089,42 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, dou
                 }
         }
         
-	IM = ( double * ) calloc ( ( n + 1 ) , sizeof( double ) );
-	DM = ( double * ) calloc ( ( m + 1 ) , sizeof( double ) );
-
-	for ( int i = 0; i < m + 1; i++ )
+	if ( ( IM = ( double ** ) calloc ( ( m + 1 ) , sizeof( double * ) ) ) == NULL )
+        {
+                fprintf( stderr, " Error: IM could not be allocated!\n");
+                return ( 0 );
+        }
+        for ( int i = 0; i < m + 1; i ++ )
+        {
+                if ( ( IM[i] = ( double * ) calloc ( ( n + 1 ) , sizeof( double ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: IM could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
+	if ( ( DM = ( double ** ) calloc ( ( m + 1 ) , sizeof( double * ) ) ) == NULL )
+        {
+                fprintf( stderr, " Error: DM could not be allocated!\n");
+                return ( 0 );
+        }
+        for ( int i = 0; i < m + 1; i ++ )
+        {
+                if ( ( DM[i] = ( double * ) calloc ( ( n + 1 ) , sizeof( double ) ) ) == NULL )
+                {
+                        fprintf( stderr, " Error: DM could not be allocated!\n");
+                        return ( 0 );
+                }
+        }
+        
+        for ( int i = 0; i < m + 1; i++ )
 	{
-		DM[i] =  m * -1;
+		DM[i][0] = m * -1;
+		IM[i][0] = m * -1;
 	}
-
 	for ( int j = 0; j < n + 1; j++ )
 	{
-		IM[j] = n * -1;
+		DM[0][j] = n * -1;
+		IM[0][j] = n * -1;
 	}
 
 	TB[0][0] = 0;
@@ -860,10 +1135,12 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, dou
 				TB[0][j] = -1;
 
 	SM[1][0] = sw . U;
+
 	for (int  i = 2; i < m + 1; i++ )
 		SM[i][0] = SM[i - 1][0] + sw . E;
 	
 	SM[0][1] = sw . U;
+
 	for ( int j = 2; j < n + 1; j++ )
 		SM[0][j] = SM[0][j - 1] + sw . E;
 
@@ -881,7 +1158,7 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double * &IM, dou
 return 0;
 }
 
-unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, unsigned char ** sequences, int ** &TB,  double ** &SM, double ** &PM, double * &IM, double * &DM, vector<char> * characters, unsigned int calculate_TB)
+unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, unsigned char ** sequences, int ** &TB,  double ** &SM, double ** &PM, double ** &IM, double ** &DM, vector<char> * characters, unsigned int calculate_TB)
 {
 
 	int m = strlen( ( char * ) profileA->at(0) );
@@ -898,11 +1175,11 @@ unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsign
 		{
 			u = SM[i-1][j-1] + probScore( characters, i, j, PM, profileA, profileB , sw );
 
-			DM[i] = MAX2 ( DM[i - 1] + sw . V, SM[i - 1][j] + sw . U );
-			v = DM[i];
+			DM[i][j] = MAX2 ( DM[i - 1][j] + sw . V, SM[i - 1][j] + sw . U );
+			v = DM[i][j];
 
-			IM[j] = MAX2 ( IM[j - 1] + sw . V, SM[i][j - 1] + sw . U );
-			w = IM[j];
+			IM[i][j] = MAX2 ( IM[i][j - 1] + sw . V, SM[i][j - 1] + sw . U );
+			w = IM[i][j];
 
 			SM[i][j] = MAX3 ( u, v, w );
 			
