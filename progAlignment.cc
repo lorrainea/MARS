@@ -104,7 +104,6 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 
 				for(int i=0; i<m+1; i++)
 				{
-					free( SM[i] );
 					free( DM[i] );
 					free( IM[i] );
 				
