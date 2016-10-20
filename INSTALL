@@ -2,7 +2,7 @@ Pre-installation Instructions
 =============================
 
    This installation requires the pre-installation of a C++ compiler, 
-and the libraries: sdsl-lite and SeqAn.
+the cmake build system, and the libraries: sdsl-lite and SeqAn.
 
 For Linux, you can install these libraries via
 
