@@ -19,4 +19,4 @@ typedef int32_t INT;
 
 unsigned int LCParray ( unsigned char *text, INT n, INT * SA, INT * ISA, INT * LCP );
 void partitioning ( INT i, INT j, INT f, INT m, INT * mf, INT * ind );
-unsigned int circular_sequence_comparison (  unsigned char * x, unsigned char * y, struct TSwitch  sw, unsigned int * rotation, unsigned int * distance );
+unsigned int circular_sequence_comparison (  unsigned char ** seq, struct TSwitch  sw, TPOcc ** D, unsigned int num_seqs );

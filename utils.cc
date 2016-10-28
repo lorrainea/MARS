@@ -41,6 +41,7 @@ static struct option long_options[] =
    { "refine-blocks",           required_argument, NULL, 'P' },
    { "cost-substitution",	optional_argument, NULL, 'S' },
    { "cost-indels",		optional_argument, NULL, 'I' },
+   { "threads", 		optional_argument, NULL, 'T' },
    { "help",                    no_argument,       NULL, 'h' },
    { NULL,                      0,                 NULL,  0  }
  };
@@ -70,6 +71,7 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> I 				= 1;
    sw -> l                              = 50;
    sw -> q                              = 5;
+   sw -> T                              = 1;
    args = 0;
 
    while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:S:I:U:V:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
@@ -178,6 +180,15 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
            sw -> E = val;
            break;
 
+	 case 'T':
+           val = strtod ( optarg, &ep );
+           if ( optarg == ep )
+            {
+              return ( 0 );
+            }
+           sw -> T = val;
+           break;
+
          case 'h':
            return ( 0 );
        }
@@ -200,23 +211,22 @@ void usage ( void )
 
 	
    fprintf ( stdout, " Usage: mars <options>\n" );
-   fprintf ( stdout, " Standard (Mandatory):\n" );
+   fprintf ( stdout, " Standard:\n" );
    fprintf ( stdout, "  -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.\n" );
-   fprintf ( stdout, "  -i, --input-file            <str>     MultiFASTA input filename with sequences.\n" );
-   fprintf ( stdout, "  -o, --output-file           <str>     Output filename with refined (cyclically shifted) sequences.\n" );   
-   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length. Typical: 5.\n");
-   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block. Typical: 25.\n");   
-   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Typical: 1.5.\n" );
-   fprintf ( stdout, " Optional:\n" );
+   fprintf ( stdout, "  -i, --input-file            <str>     MultiFASTA input filename.\n" );
+   fprintf ( stdout, "  -o, --output-file           <str>     Output filename with rotated sequences.\n" );   
+   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length.\n");
+   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block.\n");   
+   fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.\n" );
    fprintf ( stdout, " Cyclic edit distance computation between pairs of sequences:\n" );   
    fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.\n" );
    fprintf ( stdout, "  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.\n" );
    fprintf ( stdout, " Refining pairwise rotations:\n" );
-   fprintf ( stdout, "  -O, --gap-open-seq          <int>     Gap open penalty in pairwise sequence alignment. Default: -10.\n" );
-   fprintf ( stdout, "  -E, --gap-extend-seq        <int>     Gap extension penalty in pairwise sequence alignment. Default: -2.\n" );   
+   fprintf ( stdout, "  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.\n" );
+   fprintf ( stdout, "  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -2.\n" );   
    fprintf ( stdout, " Progressive alignment of profiles:\n" ); 
-   fprintf ( stdout, "  -U, --gap-open-pro          <int>     Gap open penalty in alignment of profiles. Default: -10.\n" );
-   fprintf ( stdout, "  -V, --gap-extend-pro        <int>     Gap extension penalty in alignment of profiles. Default: -2.\n" );
+   fprintf ( stdout, "  -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.\n" );
+   fprintf ( stdout, "  -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -2.\n" );
  }
 
 double gettime( void )

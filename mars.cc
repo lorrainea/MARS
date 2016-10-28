@@ -64,23 +64,24 @@ int main(int argc, char **argv)
                 else if ( ! strcmp ( "PROT", sw . alphabet ) )  { alphabet = ( char * ) PROT; sw . matrix = 1; }
                 else
                 {
-                        fprintf ( stderr, " Error: The alphabet value should be `DNA' for nucleotide sequences or `PROT' for protein sequences!\n" );
+                        fprintf ( stderr, " Error: alphabet argument a should be `DNA' for nucleotide sequences or `PROT' for protein sequences!\n" );
                         return ( 1 );
                 }
 
-		if ( sw . P <= 0 )
+		if ( sw . P < 0 )
 		{
-			fprintf ( stderr, " Error: The value of parameter P must be greater than 0!\n" );
+			fprintf ( stderr, " Error: The number of refinement blocks cannot be smaller than 0.\n" );
 			return ( 1 );
 		}
+
 		if ( sw . q < 2 )
 		{
-			fprintf ( stderr, " Error: The q-gram length must be greater than 1!\n" );
+			fprintf ( stderr, " Error: The q-gram length is too small.\n" );
 			return ( 1 );	
 		}
 		if( sw . q >= sw . l )
 		{
-			fprintf ( stderr, " Error: The q-gram length must be smaller than the block length!\n" );
+			fprintf ( stderr, " Error: The length of the q-gram must be smaller than the block length.\n" );
 			return ( 1 );
 		}
 	
@@ -220,46 +221,64 @@ int main(int argc, char **argv)
 		exit( EXIT_FAILURE );
 	}
 
-	for ( int i = 0; i < num_seqs; i++ )
+	for(int i=0; i<num_seqs; i++)
 	{
-		unsigned int m = strlen ( ( char * ) seq[i] );
-
-		if( sw . P * sw . l * 3 > m )
-		{
-			fprintf( stderr, " Error: The value of parameter P is too large!\n" );
-			exit( EXIT_FAILURE );
-		}
-		
 		if ( ( D[i] = ( TPOcc * ) calloc ( ( num_seqs + 1 ) , sizeof( TPOcc ) ) ) == NULL )
 		{
 			fprintf( stderr, " Error: Cannot allocate memory!\n" );
 			exit( EXIT_FAILURE );
 		}
-			
+
+	}
+		
+	/*Finds an approximate rotation for every pair of sequences in the data sets*/ 
+	circular_sequence_comparison ( seq, sw, D, num_seqs );
+
+	init_substitution_score_tables ();
+
+	int rs = sw . l * sw . P * 3;
+
+	int ** IM;
+	int ** DM;
+	int ** TM;
+
+	if( sw . O != sw . E )
+		nw_ag_allocation ( rs, rs, IM, DM, TM );
+	else 
+		nw_allocation( rs, rs, TM );
+
+	for ( int i = 0; i < num_seqs; i++ )
+	{	
+		unsigned int m = strlen ( ( char * ) seq[i] );
+	
+		if( sw . P * sw . l > m/3 )
+		{
+			fprintf( stderr, " Error: P is too large!\n" );
+			exit( EXIT_FAILURE );
+		}
+
 		for ( int j = 0; j < num_seqs; j ++ )
 		{
 			if ( i == j ) 
 				continue;
-
-			unsigned int n = strlen ( ( char * ) seq[j] );	
+	
 			unsigned char * xr = ( unsigned char * ) calloc( ( m + 1 ) , sizeof( unsigned char ) );
+			unsigned int n = strlen ( ( char * ) seq[j] );	
 
 			if ( sw . l > m - sw . q + 1  || sw . l > n - sw . q + 1 )
 			{
-				fprintf( stderr, " Error: Illegal block length!\n" );
+				fprintf( stderr, " Error: Illegal block length.\n" );
 				exit ( 1 );
 			}
 
-			unsigned int distance = ( int ) DBL_MAX;
-			unsigned int rotation = 0;
-
-			/*Finds an approximate rotation for every pair of sequences in the data sets*/ 
-			circular_sequence_comparison ( seq[i], seq[j], sw, &rotation, &distance );
+			
+			unsigned int distance = D[i][j] . err;
+			unsigned int rotation = D[i][j] . rot;
 
 			create_rotation ( seq[i], rotation, xr );
 
 			/*Produces more accurate rotations using refined sequences*/
-			sacsc_refinement(seq[i], xr, seq[j], sw, &rotation, &distance);
+			sacsc_refinement(seq[i], xr, seq[j], sw, &rotation, &distance, IM, DM, TM );
 
 			D[i][j] . err = distance;
 			D[i][j] . rot = rotation;
@@ -267,6 +286,8 @@ int main(int argc, char **argv)
 			free( xr );
 
 		}
+
+		
 	}
 
 	fprintf ( stderr, " Creating the guide tree\n" );
@@ -318,11 +339,30 @@ int main(int argc, char **argv)
         fprintf( stderr, "Elapsed time for processing %d sequence(s): %lf secs.\n", num_seqs, ( end - start ) );
 	
 	/* Deallocate */
+
+	for ( int j = 0; j < rs + 1; j ++ )
+	{
+		free ( TM[j] );
+	}
+
+	if( sw . O != sw . E )
+	{
+
+		for ( int j = 0; j < rs + 1; j ++ )
+		{
+			free ( IM[j] );
+			free ( DM[j] );
+		}
+		free ( IM );
+		free ( DM );
+	}
+	
 	for ( i = 0; i < num_seqs; i ++ )
 	{
 		free ( seq[i] );
 		free( seq_id[i] );
 	}	
+	free ( TM );
 	free ( seq );
 	free ( seq_id );
         free ( sw . input_filename );

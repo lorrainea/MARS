@@ -171,7 +171,6 @@ unsigned int nw_allocation( unsigned int m, unsigned int n, int ** &T )
 
 unsigned int nw ( unsigned char * p, unsigned int m, unsigned char * t, unsigned int n, struct TSwitch  sw, int * score, int ** &T )
 {
-	init_substitution_score_tables ();
 	int ins = sw . O;
 	int del = sw . E;
 	int i, j;
@@ -196,13 +195,9 @@ unsigned int nw ( unsigned char * p, unsigned int m, unsigned char * t, unsigned
 	return EXIT_SUCCESS;
 }
 
-unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned char * y, struct TSwitch  sw, unsigned int * rotation, unsigned int * distance ) 
+unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned char * y, struct TSwitch  sw, unsigned int * rotation, unsigned int * distance, int ** &I, int ** &D, int ** &T ) 
 {
 	unsigned int rot = *rotation;
-
-	int ** I;
-	int ** D;
-	int ** T;
 
 	unsigned int m = strlen ( ( char * ) x );
 	unsigned int n = strlen ( ( char * ) y );
@@ -236,11 +231,6 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 	unsigned int rrot = 0;
 	unsigned char * Xr = ( unsigned char * ) calloc( ( 3 * sl + 1 ) , sizeof( unsigned char ) );
 
-	if( sw . O != sw . E )
-		nw_ag_allocation ( m, n, I, D, T );
-	else 
-		nw_allocation( m, n, T );
-
 	for ( int i = 0; i < mm; i++ )
 	{
 		if ( i >= sl && i < 2 * sl )
@@ -261,26 +251,6 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 			rrot = i;
 		}	 
 	}
-
-	for ( int j = 0; j < m + 1; j ++ )
-	{
-		free ( T[j] );
-	}
-
-	free ( Xr );
-
-	if( sw . O != sw . E )
-	{
-
-		for ( int j = 0; j < m + 1; j ++ )
-		{
-			free ( I[j] );
-			free ( D[j] );
-		}
-		free ( I );
-		free ( D );
-	}
-	free ( T );
 
 	int final_rot;
         if ( rrot < sl )

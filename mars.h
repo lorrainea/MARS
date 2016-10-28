@@ -45,10 +45,8 @@ struct TSwitch
    char               * output_filename;
    unsigned int         matrix;
    double	        P;
-   int 			O, E, U, V, S, I, D;
-   int 			f, g;
-   unsigned int         l;
-   unsigned int         q;
+   int 			O, E, U, V, S, I, D, T;
+   unsigned int         l, q;
  };
 
 struct TPOcc
