@@ -37,7 +37,6 @@ using namespace std;
 unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, struct TSwitch  sw, int * Rot, vector<array<int, 2>> * branchingOrder, unsigned int num_seqs )
 {
 	
-	init_substitution_score_tables ();
 	int * R = ( int * ) calloc ( num_seqs , sizeof ( int ) );
 
 	unsigned char ** sequences;
@@ -46,20 +45,14 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
                 fprintf( stderr, " Error: Sequences could not be allocated!\n");
                 return ( 0 );
         }
-        for ( int i = 0; i < num_seqs; i ++ )
-        {
-                if ( ( sequences[i] = ( unsigned char * ) calloc ( ( ALLOC_SIZE ) , sizeof( unsigned char ) ) ) == NULL )
-                {
-                        fprintf( stderr, " Error: Sequences could not be allocated!\n");
-                        return ( 0 );
-                }
-        }
 
-	for(int i=0; i<num_seqs; i++)
-	{
-		memcpy( sequences[i], seq[i],  strlen ( (  char * ) seq[i] )*sizeof( unsigned char )  ) ;
-	}
+	vector<unsigned char * > * profileA = new vector<unsigned char *>();
+	vector<unsigned char * > * profileB = new vector<unsigned char *>();
 
+	vector<char> * characters = new vector<char>();
+
+	vector<int> * profileAPos = new vector<int>();
+	vector<int> * profileBPos = new vector<int>();
 	
 	for( int i=0; i<branchingOrder->size(); i++ ) //traverse through all nodes in tree
 	{
@@ -70,7 +63,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 		{
 			int m = strlen( ( char * ) seq[ children[0] ] );
 			int n = strlen( ( char * ) seq[ children[1] ] );
-	
+
 			R[ children[0] ] = D[ children[0] ][ children[1] ] . rot; // obtain first rotation for two sequences (already refined)
 
 			Rot[ children[0] ] =  D[ children[0] ][ children[1] ] . rot; // Accumulated rotation array
@@ -79,18 +72,12 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 
 			create_rotation( seq[ children[0] ] , R[ children[0] ], rotatedSeq );
 
-			vector<unsigned char * > * profileA = new vector<unsigned char *>();
-			vector<unsigned char * > * profileB = new vector<unsigned char *>();
-
-			vector<int> * profileAPos = new vector<int>();
-			vector<int> * profileBPos = new vector<int>();
-
 			profileA->push_back( rotatedSeq );
 			profileB->push_back( seq[ children[1] ] );
 
 	       		profileAPos->push_back( children[0] );
 	       		profileBPos->push_back( children[1] );
-	   		
+			   					
 			int ** TB;
 			double ** SM;
 
@@ -100,7 +87,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				double ** DM;
 	
  				pairAllocation_ag( SM, TB, IM, DM, profileA, profileB , sw );
-				alignPairs_ag(profileA, profileB , sw, sequences, TB, SM, IM,  DM);
+				alignPairs_ag(profileA, profileB , sw, TB, SM, IM,  DM);
 
 				for(int i=0; i<m+1; i++)
 				{
@@ -116,12 +103,11 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			{	
 	
 				pairAllocation( SM , TB, profileA, profileB, sw );
-				alignPairs(profileA, profileB , sw, sequences, TB, SM);
+				alignPairs(profileA, profileB , sw, TB, SM);
 	
 			}
 
 			alignSequences( profileA, profileB, profileAPos, profileBPos, sequences , TB);
-
 
 			for(int i=0; i<m+1; i++)
 			{
@@ -132,21 +118,13 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			free( TB );
 			free( SM );
 			free( rotatedSeq );
-			delete( profileA );
-			delete( profileB );
-			delete( profileAPos );
-			delete( profileBPos );
+			profileA->clear();
+			profileB->clear();
+			profileAPos->clear();
+			profileBPos->clear();
 		}
 		else 
 		{
-
-			vector<unsigned char * > * profileA = new vector<unsigned char *>();  // holds all alignments in profile A
-			vector<unsigned char * > * profileB = new vector<unsigned char *>();  // holds all alignments in profile B
-			vector<char> * characters = new vector<char>(); // hold characters in profile A
-
-			vector<int> * profileAPos = new vector<int>(); // holds all leaves of profile A
-			vector<int> * profileBPos = new vector<int>(); // holds all leaves of profile B
-
 			String<int> leaves0;
 			collectLeaves(njTree, children[0] , leaves0); // find all leaves of child 0
 
@@ -171,7 +149,19 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			}
 
 			int m = strlen( ( char * ) sequences[ profileAPos->at(0) ] );
-			int n = strlen( ( char * ) sequences[ profileBPos->at(0) ] );
+
+			int n;
+			if( sequences[ profileBPos->at(0) ] == NULL )
+			{
+				n = strlen( ( char * ) seq[ profileBPos->at(0) ] );
+
+				for( int i = 0; i < profileBPos->size(); i ++ )
+        			{
+					sequences[ profileBPos->at(i) ] = ( unsigned char * ) calloc ( ( n + 1 ) , sizeof( unsigned char ) );
+					memcpy( sequences[ profileBPos->at(i)  ], seq[ profileBPos->at(i)  ],  n * sizeof( unsigned char )  ) ;
+				}
+			}
+			else n = strlen( ( char * ) sequences[ profileBPos->at(0) ] );
 
 			int rotValue = 0;
 			int bValue = 0;
@@ -298,8 +288,8 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 					}
 
 					if( sw . U != sw . V )
-						alignmentScore_ag( profileA, profileB, &score, sw, i, &rotation, sequences, TB, SM, PM, IM, DM, characters, 0);
-					else alignmentScore( profileA, profileB, &score, sw, i, &rotation, sequences, TB, SM, PM, characters, 0);
+						alignmentScore_ag( profileA, profileB, &score, sw, i, &rotation, TB, SM, PM, IM, DM, characters, 0);
+					else alignmentScore( profileA, profileB, &score, sw, i, &rotation, TB, SM, PM, characters, 0);
 					
 					for(int k = 0; k < profileBPos->size(); k++ )
 						free( rotatedSeq[k] );
@@ -380,7 +370,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				Rot[ profileBPos->at(i) ] = Rot[ profileBPos->at(i) ] + final_rot;				
 				for(int j=0; j<=final_rot; j++)
 				{
-					if( sequences[ profileBPos->at(i)][j] == '-' )
+					if( sequences[ profileBPos->at(i)][j] == GAP )
 					{
 						Rot[ profileBPos->at(i) ] = Rot[ profileBPos->at(i) ] - 1;
 					}
@@ -418,12 +408,12 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 
 			/* Calculate traceback matrix */
 			if( sw . U != sw . V )
-				alignmentScore_ag( profileA, profileB, &score, sw, 0, &rotation, sequences, TBl, SMl, PMl, IMl, DMl, characters, 1);
-			else alignmentScore( profileA, profileB, &score, sw, 0, &rotation, sequences, TBl, SMl, PMl, characters, 1);
+				alignmentScore_ag( profileA, profileB, &score, sw, 0, &rotation, TBl, SMl, PMl, IMl, DMl, characters, 1);
+			else alignmentScore( profileA, profileB, &score, sw, 0, &rotation,  TBl, SMl, PMl, characters, 1);
 
 			for(int i=0; i<characters->size(); i++)
 				free( PMl[i] );
-			delete( characters );
+			characters->clear();
 
 			for(int i=0; i<m+ 1; i++)
 				free( SMl[i] );
@@ -449,10 +439,10 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				free( final_rotation[i] );
 	
 			free( final_rotation );
-			delete( profileA );
-			delete( profileB );
-			delete( profileAPos );
-			delete( profileBPos );
+			profileA->clear();
+			profileB->clear();
+			profileAPos->clear();
+			profileBPos->clear();
 			for(int i=0; i<m+ 1; i++)
 				free( TBl[i] );
 			
@@ -463,6 +453,11 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 		}
 	}
 
+	delete( profileA );
+	delete( profileB );
+	delete( profileAPos );
+	delete( profileBPos );
+	delete( characters ); 
 	for ( int i = 0; i < num_seqs; i ++ )
 	{
 		free ( sequences[i] );
@@ -483,13 +478,8 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 	int seqP = 0; // sizes of new sequences for profile A and profile B
 	int seqS = 0; // m and n will increase when gaps are added
 	
-	unsigned char ** ASequences = ( unsigned char ** ) calloc( ( profileA->size() ) , sizeof( unsigned char * ) );
-	for(int i=0; i< profileA->size(); i++)
-		 ASequences[i] = ( unsigned char * ) calloc ( ( ALLOC_SIZE ) , sizeof( unsigned char ));
-		
-	unsigned char ** BSequences = ( unsigned char ** ) calloc( ( profileB->size() ) , sizeof( unsigned char * ) );
-	for(int j=0; j< profileB->size(); j++)
-		 BSequences[j] = ( unsigned char * ) calloc ( ( ALLOC_SIZE ) , sizeof( unsigned char ));
+	vector< vector <unsigned char> > * ASequences = new vector< vector<unsigned char> >( profileA->size() );
+	vector< vector <unsigned char> > * BSequences = new vector< vector<unsigned char> >( profileB->size() );
 
 	int dirI = m; // direction traceback takes for i
 	int dirJ = n; // direction traceback takes for j
@@ -503,11 +493,11 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 		{
 			for(int k=0; k<profileAPos->size(); k++)
 			{
-				ASequences[ k ][ seqP]  = profileA->at(k )[ i-1 ];
+				ASequences->at( k ).insert( ASequences->at( k ).begin() + seqP , profileA->at( k )[ i-1 ] );
 			}
 			for(int l=0; l<profileBPos->size(); l++ )
 			{
-				BSequences[ l ][ seqS]  = profileB->at( l )[ j-1 ];
+				BSequences->at( l ).insert( BSequences->at( l ).begin() + seqS , profileB->at( l )[ j-1 ] );
 			}
 			
 			seqP++; seqS++;	
@@ -518,12 +508,12 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 		{
 			for(int k=0; k<profileAPos->size(); k++)
 			{
-				ASequences[ k ][ seqP]  = profileA->at(k )[ i-1 ];
+				ASequences->at( k ).insert( ASequences->at( k ).begin() + seqP , profileA->at( k )[ i-1 ] );
 			}
 			
 			for(int l =0; l<profileB->size(); l++)
 			{			
-				BSequences[ l ][ seqS ] = '-';
+				BSequences->at( l ).insert( BSequences->at( l ).begin() + seqS , GAP );
 			}
 
 			seqP++; seqS++;
@@ -534,12 +524,12 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 		{
 			for(int k =0; k<profileAPos->size(); k++)
 			{
-				ASequences[ k ][ seqP ] = '-'; 
+				ASequences->at( k ).insert( ASequences->at( k ).begin() + seqP , GAP ); 
 			}
 			
 			for(int l=0; l<profileBPos->size(); l++ )
 			{
-				BSequences[ l ][ seqS]  = profileB->at( l )[ j-1 ];
+				BSequences->at( l ).insert( BSequences->at( l ).begin() + seqS , profileB->at( l )[ j-1 ] );
 			}
 
 			seqP++; seqS++;
@@ -552,10 +542,13 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 	
 	for(int a=0; a<profileA->size(); a++)
 	{
+		free( sequences[ profileAPos->at(a) ] );
+		sequences[ profileAPos->at(a) ] = ( unsigned char * ) calloc( ( seqP + 1 ) , sizeof( unsigned char  ) );
+
 		int k = seqP-1;
 		for(int i=0; i<seqP; i++)
 		{
-			sequences[profileAPos->at(a)][i] = ASequences[a][k];
+			sequences[profileAPos->at(a)][i] = ASequences->at( a ).at( k );
 			k --;
 			 			
 		}	
@@ -565,24 +558,22 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 		
 	for(int b=0; b<profileB->size(); b++)
 	{
+		free( sequences[ profileBPos->at(b) ] );
+		sequences[ profileBPos->at(b) ] = ( unsigned char * ) calloc( ( seqS + 1 ) , sizeof( unsigned char  ) );
+
 		int l = seqS-1;
 		for(int j=0; j<seqS; j++)
 		{
-			sequences[ profileBPos->at(b) ][j] = BSequences[b][l];
+			sequences[ profileBPos->at(b) ][j] = BSequences->at( b ).at( l );
 			l--;
 		}
 	
 		sequences[ profileBPos->at(b)][ seqS] = '\0'; 
 	}
-	
-	for(int i=0; i<profileA->size(); i++)
-		free( ASequences[i] );
+
 			
-	for(int j=0; j<profileB->size(); j++)
-		free( BSequences[j] );
-			
-	free( ASequences );
-	free( BSequences );
+	delete( ASequences );
+	delete( BSequences );
 
 return 0;
 }
@@ -685,7 +676,7 @@ unsigned int alignAllocation( double ** &PM, double ** &SM, int ** &TB, vector<c
 	}
 }
 
-unsigned int alignmentScore(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, unsigned char ** sequences, int ** &TB, double ** &SM, double ** &PM, vector<char> * characters, unsigned int calculate_TB)
+unsigned int alignmentScore(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, int ** &TB, double ** &SM, double ** &PM, vector<char> * characters, unsigned int calculate_TB)
 {
 
 	int m = strlen( ( char * ) profileA->at(0) );
@@ -939,7 +930,7 @@ unsigned int pairAllocation_ag( double ** &SM, int ** &TB,  double ** &IM, doubl
 	SM[0][j] = j * sw . E;
 }
 
-unsigned int alignPairs(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, unsigned char ** sequences, int ** &TB,  double ** &SM )
+unsigned int alignPairs(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, int ** &TB,  double ** &SM )
 {
 
 	int m = strlen( ( char * ) profileA->at(0) );
@@ -977,7 +968,7 @@ unsigned int alignPairs(vector<unsigned char *> * profileA, vector<unsigned char
 
 }
 
-unsigned int alignPairs_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, unsigned char ** sequences, int ** &TB,  double ** &SM,  double ** &IM,  double ** &DM)
+unsigned int alignPairs_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, int ** &TB,  double ** &SM,  double ** &IM,  double ** &DM)
 {
 
 	int m = strlen( ( char * ) profileA->at(0) );
@@ -1157,7 +1148,7 @@ unsigned int alignAllocation_ag( double ** &PM, double ** &SM, double ** &IM, do
 return 0;
 }
 
-unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, unsigned char ** sequences, int ** &TB,  double ** &SM, double ** &PM, double ** &IM, double ** &DM, vector<char> * characters, unsigned int calculate_TB)
+unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, int ** &TB,  double ** &SM, double ** &PM, double ** &IM, double ** &DM, vector<char> * characters, unsigned int calculate_TB)
 {
 
 	int m = strlen( ( char * ) profileA->at(0) );

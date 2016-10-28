@@ -26,11 +26,11 @@ unsigned int nj(TPOcc ** D, unsigned int n,  unsigned char ** seq, struct TSwitc
 
 unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, struct TSwitch  sw, int * Rot, vector<array<int, 2>> * branchingOrder, unsigned int num_seqs );
 
-unsigned int alignPairs(unsigned char * x, unsigned char * y, unsigned char ** sequences, struct TSwitch sw, int posX, int posY);
+unsigned int alignPairs(unsigned char * x, unsigned char * y, struct TSwitch sw, int posX, int posY);
 
-unsigned int alignmentScore(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, unsigned char ** sequences, int ** &TB, double ** &SM, double ** &PM, vector<char> * characters, unsigned int calculate_TB);
+unsigned int alignmentScore(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, int ** &TB, double ** &SM, double ** &PM, vector<char> * characters, unsigned int calculate_TB);
 
-unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, unsigned char ** sequences, int ** &TB,  double ** &SM, double ** &PM, double ** &IM, double ** &DM, vector<char> * characters, unsigned int calculate_TB);
+unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, int ** &TB,  double ** &SM, double ** &PM, double ** &IM, double ** &DM, vector<char> * characters, unsigned int calculate_TB);
 
 unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, vector<int> * profileAPos, vector<int> * profileBPos, unsigned char ** sequences, int ** &TB);
 
@@ -42,9 +42,9 @@ unsigned int alignAllocation( double ** &PM, double ** &SM, int ** &TB, vector<c
 
 int similarity( unsigned char x, unsigned char y, struct TSwitch sw);
 
-unsigned int alignPairs_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, unsigned char ** sequences, int ** &TB,  double ** &SM,  double ** &IM,  double ** &DM);
+unsigned int alignPairs_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, int ** &TB,  double ** &SM,  double ** &IM,  double ** &DM);
 
-unsigned int alignPairs(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, unsigned char ** sequences, int ** &TB,  double ** &SM );
+unsigned int alignPairs(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, int ** &TB,  double ** &SM );
 
 unsigned int pairAllocation_ag( double ** &SM, int ** &TB,  double ** &IM, double ** &DM, vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw);
 
