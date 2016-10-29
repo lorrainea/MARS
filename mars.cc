@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 	double start = gettime();
 
 	/* Read the (Multi)FASTA file in memory */
-	fprintf ( stderr, " Reading the (Multi)FASTA input file: %s\n", input_filename );
+	fprintf ( stderr, " Reading the MultiFASTA input file: %s\n", input_filename );
 	if ( ! ( in_fd = fopen ( input_filename, "r") ) )
 	{
 		fprintf ( stderr, " Error: Cannot open file %s!\n", input_filename );
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	{
 		if ( c != '>' )
 		{
-			fprintf ( stderr, " Error: input file %s is not in FASTA format!\n", input_filename );
+			fprintf ( stderr, " Error: input file %s is not in MultiFASTA format!\n", input_filename );
 			return ( 1 );
 		}
 		else
@@ -206,7 +206,12 @@ int main(int argc, char **argv)
 		fprintf( stderr, " Error: file close error!\n");
 		return ( 1 );
 	}
-	
+
+	if ( num_seqs == 1 )
+	{
+		fprintf( stderr, " Error: input file is not a MultiFASTA file!\n");
+		return ( 1 );
+	}
 
 	fprintf ( stderr, " Computing cyclic edit distance for all sequence pairs\n" );
 		
@@ -336,7 +341,7 @@ int main(int argc, char **argv)
 
 	double end = gettime();
 
-        fprintf( stderr, "Elapsed time for processing %d sequence(s): %lf secs.\n", num_seqs, ( end - start ) );
+        fprintf( stderr, "Elapsed time for processing %d sequences: %lf secs.\n", num_seqs, ( end - start ) );
 	
 	/* Deallocate */
 
