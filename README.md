@@ -15,23 +15,28 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 ```
 
  Usage: mars <options>
- Standard (Mandatory):
+ Standard:
   -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.
-  -i, --input-file            <str>     MultiFASTA input filename with sequences.
-  -o, --output-file           <str>     Output filename with refined (cyclically shifted) sequences.
-  -q, --q-length              <int>     The q-gram length. Typical: 5.
-  -l, --block-length          <int>     The length of each block. Typical: 25.
-  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Typical: 1.5.
- Optional:
+  -i, --input-file            <str>     MultiFASTA input filename.
+  -o, --output-file           <str>     Output filename with rotated sequences.
+  -m, --method                <int>     Method used to compute pairwise cyclic edit distance: 
+                                        0 for heuristic cyclic edit distance hCED - Faster but less accurate (Default). 
+                                        1 for branch and bound method - Slower but more accurate.
+  -T, --threads               <int>     Number of threads to use. Default: 1. 
+ Computation of pairwise cyclic edit distance for method hCED. 
+  -q, --q-length              <int>     The q-gram length. 
+  -l, --block-length          <int>     The length of each block.
+  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.
+ Refining pairwise rotations for method hCED:
+  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.
+  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -1.
  Cyclic edit distance computation between pairs of sequences:
   -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
   -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.
- Refining pairwise rotations:
-  -O, --gap-open-seq          <int>     Gap open penalty in pairwise sequence alignment. Default: -10.
-  -E, --gap-extend-seq        <int>     Gap extension penalty in pairwise sequence alignment. Default: -2.
  Progressive alignment of profiles:
-  -U, --gap-open-pro          <int>     Gap open penalty in alignment of profiles. Default: -10.
-  -V, --gap-extend-pro        <int>     Gap extension penalty in alignment of profiles. Default: -2.
+  -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.
+  -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -1.
+
 
 ```
 
