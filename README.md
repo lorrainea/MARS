@@ -13,31 +13,29 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 <b>OUTPUT</b>: The set of refined (cyclically shifted) sequences with no gaps added in FASTA format. The output file is specified using the <b>-o</b> option. This output file can then be used as input to the preferred MSA program to obtain the final alignment.
 
 ```
-
  Usage: mars <options>
- Standard:
+ Standard (Mandatory):
   -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.
   -i, --input-file            <str>     MultiFASTA input filename.
   -o, --output-file           <str>     Output filename with rotated sequences.
-  -m, --method                <int>     Method used to compute pairwise cyclic edit distance: 
-                                        0 for heuristic cyclic edit distance hCED - Faster but less accurate (Default). 
-                                        1 for branch and bound method - Slower but more accurate.
-  -T, --threads               <int>     Number of threads to use. Default: 1. 
+ Optional:
+ Cyclic edit distance computation between pairs of sequences:
+  -m, --method                <int>     0 for heuristic cyclic edit distance hCED - Faster but less accurate. 
+                                        1 for branch and bound method - Slower but more accurate. Default: 0.
+  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
+  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.
  Computation of pairwise cyclic edit distance for method hCED. 
-  -q, --q-length              <int>     The q-gram length. 
-  -l, --block-length          <int>     The length of each block.
-  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends.
+  -q, --q-length              <int>     The q-gram length. Default: 5.
+  -l, --block-length          <int>     The length of each block. Default: 25.
+  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Default: 1.
  Refining pairwise rotations for method hCED:
   -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.
   -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -1.
- Cyclic edit distance computation between pairs of sequences:
-  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
-  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.
  Progressive alignment of profiles:
   -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.
   -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -1.
-
-
+ Number of threads:
+  -T, --threads               <int>     Number of threads to use. Default: 1.
 ```
 
 <b>Example</b>: For a typical run, see file EXAMPLES.
