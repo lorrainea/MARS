@@ -32,8 +32,8 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
   -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.
   -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -1.
  Progressive alignment of profiles:
-  -U, --gap-open-pro          <int>     Affine gap open penalty in progressive alignment of profiles. Default: -10.
-  -V, --gap-extend-pro        <int>     Affine gap extension penalty in progressive alignment of profiles. Default: -1.
+  -U, --gap-open-pro          <int>     Affine gap open penalty in alignment of profiles. Default: -10.
+  -V, --gap-extend-pro        <int>     Affine gap extension penalty in alignment of profiles. Default: -1.
  Number of threads:
   -T, --threads               <int>     Number of threads to use. Default: 1.
 ```
