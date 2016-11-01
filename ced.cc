@@ -288,6 +288,7 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 
 	free ( X );
 	free ( Y );
+	free ( Xr );
 	free( x_final_rotation );
 
 	return EXIT_SUCCESS;

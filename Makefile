@@ -8,9 +8,9 @@ LFLAGS= -std=c++11 -I ./ -I ./libsdsl/include/ -L ./libsdsl/lib/ -lsdsl -ldivsuf
  
 EXE=    mars
  
-SRC=    mars.cc matrices.cc utils.cc sacsc.cc ced.cc nj.cc progAlignment.cc 
+SRC=    mars.cc matrices.cc utils.cc sacsc.cc ced.cc nj.cc progAlignment.cc cyclic.cc RestrictedLevenshtein.cc bb.cc heap.cc
  
-HD=     EBLOSUM62.h EDNAFULL.h mars.h sacsc.h ced.h nj.h  Makefile
+HD=     EBLOSUM62.h EDNAFULL.h mars.h sacsc.h ced.h nj.h RestrictedLevenshtein.h heap.h Makefile
  
 # 
 # No need to edit below this line 

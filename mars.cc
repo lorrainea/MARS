@@ -51,8 +51,10 @@ int main(int argc, char **argv)
 	/* Decodes the arguments */
         i = decode_switches ( argc, argv, &sw );
 
+	omp_set_num_threads( sw.T );
+
 	/* Check the arguments */
-        if ( i < 10 )
+        if ( i < 3 )
         {
                 usage ();
                 return ( 1 );
@@ -68,23 +70,30 @@ int main(int argc, char **argv)
                         return ( 1 );
                 }
 
-		if ( sw . P < 0 )
+		if( sw . m != 0 && sw . m != 1 )
+		{
+			fprintf( stderr, " Error: method m must be 0 for hCED or 1 for branch and bound. \n" );
+			return ( 1 );
+		}
+
+		if ( sw . m == 0 && sw . P < 0 )
 		{
 			fprintf ( stderr, " Error: The number of refinement blocks cannot be smaller than 0.\n" );
 			return ( 1 );
 		}
 
-		if ( sw . q < 2 )
+		if ( sw . m  == 0 && sw . q < 2 )
 		{
 			fprintf ( stderr, " Error: The q-gram length is too small.\n" );
 			return ( 1 );	
 		}
-		if( sw . q >= sw . l )
+
+		if( sw . m == 0 && sw . q >= sw . l )
 		{
 			fprintf ( stderr, " Error: The length of the q-gram must be smaller than the block length.\n" );
 			return ( 1 );
 		}
-	
+
                 input_filename       = sw . input_filename;
 		if ( input_filename == NULL )
 		{
@@ -95,11 +104,10 @@ int main(int argc, char **argv)
 
         }
 
-
 	double start = gettime();
 
 	/* Read the (Multi)FASTA file in memory */
-	fprintf ( stderr, " Reading the MultiFASTA input file: %s\n", input_filename );
+	fprintf ( stderr, " Reading the (Multi)FASTA input file: %s\n", input_filename );
 	if ( ! ( in_fd = fopen ( input_filename, "r") ) )
 	{
 		fprintf ( stderr, " Error: Cannot open file %s!\n", input_filename );
@@ -115,7 +123,7 @@ int main(int argc, char **argv)
 	{
 		if ( c != '>' )
 		{
-			fprintf ( stderr, " Error: input file %s is not in MultiFASTA format!\n", input_filename );
+			fprintf ( stderr, " Error: input file %s is not in FASTA format!\n", input_filename );
 			return ( 1 );
 		}
 		else
@@ -207,11 +215,12 @@ int main(int argc, char **argv)
 		return ( 1 );
 	}
 
-	if ( num_seqs == 1 )
-	{
-		fprintf( stderr, " Error: input file is not a MultiFASTA file!\n");
-		return ( 1 );
-	}
+	float * gamma = ( float * ) calloc ( 4 , sizeof ( float ) );
+
+	gamma[0] = sw . I; //insertion cost
+	gamma[1] = sw . I; //deletion cost
+	gamma[2] = sw . S; //substitution cost
+	gamma[3] = 0.0; //matching cost
 
 	fprintf ( stderr, " Computing cyclic edit distance for all sequence pairs\n" );
 		
@@ -236,8 +245,9 @@ int main(int argc, char **argv)
 
 	}
 		
-	/*Finds an approximate rotation for every pair of sequences in the data sets*/ 
-	circular_sequence_comparison ( seq, sw, D, num_seqs );
+	/*Finds an approximate rotation for every pair of sequences in the data sets for method hCED*/ 
+	if ( sw . m == 0 )
+		circular_sequence_comparison ( seq, sw, D, num_seqs );
 
 	init_substitution_score_tables ();
 
@@ -252,6 +262,7 @@ int main(int argc, char **argv)
 	else 
 		nw_allocation( rs, rs, TM );
 
+	#pragma omp parallel for
 	for ( int i = 0; i < num_seqs; i++ )
 	{	
 		unsigned int m = strlen ( ( char * ) seq[i] );
@@ -280,16 +291,19 @@ int main(int argc, char **argv)
 			unsigned int distance = D[i][j] . err;
 			unsigned int rotation = D[i][j] . rot;
 
-			create_rotation ( seq[i], rotation, xr );
+			if( sw . m == 0 )
+			{
+				create_rotation ( seq[i], rotation, xr );
 
-			/*Produces more accurate rotations using refined sequences*/
-			sacsc_refinement(seq[i], xr, seq[j], sw, &rotation, &distance, IM, DM, TM );
+				/*Produces more accurate rotations using refined sequences for method hCED*/
+				sacsc_refinement(seq[i], xr, seq[j], sw, &rotation, &distance, IM, DM, TM );
+			}
+			else cyclic( seq[i], seq[j], m, n, gamma, 1, 0, &rotation, &distance) ;
 
 			D[i][j] . err = distance;
 			D[i][j] . rot = rotation;
 
 			free( xr );
-
 		}
 
 		
@@ -341,7 +355,7 @@ int main(int argc, char **argv)
 
 	double end = gettime();
 
-        fprintf( stderr, "Elapsed time for processing %d sequences: %lf secs.\n", num_seqs, ( end - start ) );
+        fprintf( stderr, "Elapsed time for processing %d sequence(s): %lf secs.\n", num_seqs, ( end - start ) );
 	
 	/* Deallocate */
 
@@ -373,6 +387,7 @@ int main(int argc, char **argv)
         free ( sw . input_filename );
         free ( sw . output_filename );
         free ( sw . alphabet );
+	free( gamma );
 
 	return ( 0 );
 }

@@ -36,7 +36,6 @@ using namespace std;
 
 unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, struct TSwitch  sw, int * Rot, vector<array<int, 2>> * branchingOrder, unsigned int num_seqs )
 {
-	
 	int * R = ( int * ) calloc ( num_seqs , sizeof ( int ) );
 
 	unsigned char ** sequences;
@@ -97,17 +96,15 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				}	
 
 				free( IM );
-				free( DM );	
+				free( DM );
 			}
 			else 
 			{	
-	
 				pairAllocation( SM , TB, profileA, profileB, sw );
 				alignPairs(profileA, profileB , sw, TB, SM);
-	
 			}
 
-			alignSequences( profileA, profileB, profileAPos, profileBPos, sequences , TB);
+			alignSequences( profileA, profileB, profileAPos, profileBPos, sequences , TB );
 
 			for(int i=0; i<m+1; i++)
 			{
@@ -253,12 +250,11 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 
 			}
 
-
 			// begin progressive alignment for every rotation of sequences in profileB
 			double score = INITIAL_SC;
 			int rotation = 0;
 	
-			if( rs > 0 )
+			if( rs > 0 && sw . m == 0 )
 			{	
 				int ** TB; 
 				double ** SM, ** PM, ** IM, ** DM;
@@ -266,7 +262,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				if( sw . U != sw . V )
 					alignAllocation_ag( PM, SM, IM, DM, TB, characters, profileA, profileB, sw );	
 				else alignAllocation( PM, SM, TB, characters, profileA, profileB, sw );
-			
+
 				profileB->clear(); // clear profileB so can be re-inserted with refined sequences
 
 				/* Find the best rotation from the refined sequence using DP score */
@@ -307,11 +303,9 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 					free( SM[j] );
 					free( TB[j] );
 				}
-				free( TB );
 
 				if( sw . U != sw . V )
 				{
-
 					for(int j=0; j<3 * rs + 1; j++)
 					{
 						free( IM[j] );
@@ -319,7 +313,9 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 					}
 					free( IM );
 					free( DM );
-				}
+				}	
+				
+				free( TB );
 				free( SM );
 				free( PM );
 			}
@@ -344,24 +340,29 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			
 			//calculate the final rotation using initial rotation and new rotation calculated
 			int final_rot = 0;
-			if ( rotation <= rs )
+			if( sw . m == 0 )
 			{
-				final_rot = rot + rotation;
-			}
-			else
-			{
-		 		final_rot = rot - ( 3*rs - rotation );
-			}
+				
+				if ( rotation <= rs )
+				{
+					final_rot = rot + rotation;
+				}
+				else
+				{
+			 		final_rot = rot - ( 3*rs - rotation );
+				}
 
-			if ( final_rot > ( int ) n )
-			{
-		 		final_rot = final_rot % n;
+				if ( final_rot > ( int ) n )
+				{
+			 		final_rot = final_rot % n;
+				}
+				else if ( final_rot < 0 )
+				{
+					final_rot = final_rot + n;
+				}
+				else final_rot = final_rot;
 			}
-			else if ( final_rot < 0 )
-			{
-				final_rot = final_rot + n;
-			}
-			else final_rot = final_rot;
+			else final_rot = rot;
 
 				
 			/* Add the rotation value to the rotation arrays */
@@ -403,7 +404,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			double ** SMl, ** PMl, ** IMl, ** DMl;
 
 			if( sw . U != sw . V )
-				alignAllocation_ag( PMl, SMl, IMl, DMl, TBl, characters, profileA, profileB, sw );	
+				alignAllocation_ag( PMl, SMl, IMl, DMl, TBl, characters, profileA, profileB, sw );
 			else alignAllocation( PMl, SMl, TBl, characters, profileA, profileB, sw );
 
 			/* Calculate traceback matrix */
@@ -418,7 +419,6 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			for(int i=0; i<m+ 1; i++)
 				free( SMl[i] );
 	
-
 			if( sw . U != sw . V )
 			{
 				for(int i=0; i<m+ 1; i++)
@@ -443,13 +443,11 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			profileB->clear();
 			profileAPos->clear();
 			profileBPos->clear();
+
 			for(int i=0; i<m+ 1; i++)
 				free( TBl[i] );
 			
 			free( TBl );
-			
-			
-			
 		}
 	}
 

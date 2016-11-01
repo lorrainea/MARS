@@ -46,7 +46,7 @@ struct TSwitch
    unsigned int         matrix;
    double	        P;
    int 			O, E, U, V, S, I, D, T;
-   unsigned int         l, q;
+   unsigned int         l, q, m;
  };
 
 struct TPOcc
@@ -67,3 +67,6 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw );
 double gettime ( void );
 void usage ( void );
 void init_substitution_score_tables ( void );
+
+void cyclic(unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, float *gamma, int time_rep, int norm, unsigned int * rotation, unsigned int * distance);
+extern void centra(char *string0, int a, char *sep, char *dummy ) ;
