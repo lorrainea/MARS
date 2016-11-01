@@ -7,9 +7,13 @@ To understand the purpose and usage of MARS please execute the following steps:
 
 2. Inspect the produced MSA.
 
-3. Conduct a typical run of MARS for file ./data/10.gappy.fasta using the following command:
+3. Conduct a typical run of MARS for file ./data/10.gappy.fasta using the hCED method with the following command:
 	
-	$ ./mars -a DNA -i ./data/10.gappy.fasta -o ./data/10.gappy.output.fasta -q 5 -l 20 -P 1
+	$ ./mars -a DNA -m 0 -i ./data/10.gappy.fasta -o ./data/10.gappy.output.fasta -q 5 -l 20 -P 1
+	
+	or the following command for using the branch and bound method:
+	
+	$ ./mars -a DNA -m 1 -i ./data/10.gappy.fasta -o ./data/10.gappy.output.fasta
 
    The sequences are now refined via cyclic rotations and output in file ./data/10.gappy.output.fasta.	
 
