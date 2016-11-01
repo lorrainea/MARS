@@ -19,7 +19,7 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
   -i, --input-file            <str>     MultiFASTA input filename.
   -o, --output-file           <str>     Output filename with rotated sequences.
  Optional:
- Cyclic edit distance computation between pairs of sequences.
+ Cyclic edit distance computation between pairs of sequences:
   -m, --method                <int>     0 for heuristic cyclic edit distance hCED - Faster but less accurate. 
                                         1 for branch and bound method - Slower but more accurate. Default: 0.
   -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
@@ -27,14 +27,14 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
  Computation of pairwise cyclic edit distance for method hCED. 
   -q, --q-length              <int>     The q-gram length. Default: 5.
   -l, --block-length          <int>     The length of each block. Default: 25.
-  -P, --refine-blocks         <dbl>     Refine the alignments by checking P blocks of the ends. Default: 1.
- Refining pairwise rotations for method hCED.
-  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise sequence alignment. Default: -10.
-  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise sequence alignment. Default: -1.
- Progressive alignment of profiles.
+ Refining pairwise rotations for method hCED:
+  -P, --refine-blocks         <dbl>     Refine rotations by aligning P blocks of the ends. Default: 1.
+  -O, --gap-open-seq          <int>     Affine gap open penalty in blocks alignment. Default: -10.
+  -E, --gap-extend-seq        <int>     Affine gap extension penalty in blocks alignment. Default: -1.
+ Progressive alignment of profiles:
   -U, --gap-open-pro          <int>     Affine gap open penalty in alignment of profiles. Default: -10.
   -V, --gap-extend-pro        <int>     Affine gap extension penalty in alignment of profiles. Default: -1.
- Number of threads.
+ Number of threads:
   -T, --threads               <int>     Number of threads to use. Default: 1.
 ```
 
