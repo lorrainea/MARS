@@ -181,6 +181,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 	   		}
 
 			int rot = rotValue;
+
 			int rs =  sw . l * sw . P;
 
 			int gapCountA = 0;
@@ -206,56 +207,55 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				rot =  rot + largestNoGapsB;
 			}
 
-			unsigned char ** initial_rotation = ( unsigned char ** ) calloc( ( profileBPos->size() ) , sizeof( unsigned char * ) );
-			for(int i=0; i<profileBPos->size(); i++ )
-			{
-				initial_rotation[i] = ( unsigned char * ) calloc( ( n + 1 ) , sizeof( unsigned char ) );
-			}
-			
-			for(int j=0; j<profileBPos->size(); j++)
-			{
-				create_rotation( sequences[ profileBPos->at( j ) ] , rot, initial_rotation[j] );
-			}	
-		   
-			unsigned char ** profB = ( unsigned char ** ) calloc( ( profileBPos->size() ) , sizeof( unsigned char * ) );
-			for(int i=0; i<profileBPos->size(); i++)
-				profB[i] = ( unsigned char * ) calloc( ( 3 * rs + 1 ) , sizeof( unsigned char ) );
-	   		
-	   		for(int j=0; j<profileBPos->size(); j++)
-	   		{
-				memcpy ( &profB[j][0], &initial_rotation[j][0], rs );
-				for ( int i = 0; i < rs; i++ )
-					profB[j][rs + i] = DEL;
-					
-				memcpy ( &profB[j][rs + rs], &initial_rotation[j][n - rs], rs );
-				profB[j][ 3* rs] = '\0';
-	
-				profileB->push_back( profB[j] );  
-			}
-
-			unsigned char ** profA = ( unsigned char ** ) calloc( ( profileAPos->size() ) , sizeof( unsigned char * ) );
-			for(int j=0; j<profileAPos->size(); j++)
-				profA[j] = ( unsigned char * ) calloc( ( 3*rs + 1 ) , sizeof( unsigned char ) );	
-		
-			for(int i=0; i<profileAPos->size(); i++)
-			{	
-				memcpy ( &profA[i][0], &sequences[ profileAPos->at(i)][0], rs );
-				for ( int k = 0; k < rs; k++ )
-					profA[i][rs + k] = DEL;
-						
-				memcpy ( &profA[i][rs + rs], &sequences[ profileAPos->at(i)][m - rs], rs );
-				profA[i][3*rs] = '\0';
-			
-				profileA->push_back( profA[i] );
-
-			}
-
-			// begin progressive alignment for every rotation of sequences in profileB
 			double score = INITIAL_SC;
 			int rotation = 0;
+			
+			if( sw . m == 0 && rs > 0)
+			{
+				unsigned char ** initial_rotation = ( unsigned char ** ) calloc( ( profileBPos->size() ) , sizeof( unsigned char * ) );
+				for(int i=0; i<profileBPos->size(); i++ )
+				{
+					initial_rotation[i] = ( unsigned char * ) calloc( ( n + 1 ) , sizeof( unsigned char ) );
+				}
+			
+				for(int j=0; j<profileBPos->size(); j++)
+				{
+					create_rotation( sequences[ profileBPos->at( j ) ] , rot, initial_rotation[j] );
+				}	
+
+				unsigned char ** profB = ( unsigned char ** ) calloc( ( profileBPos->size() ) , sizeof( unsigned char * ) );
+				for(int i=0; i<profileBPos->size(); i++)
+					profB[i] = ( unsigned char * ) calloc( ( 3 * rs + 1 ) , sizeof( unsigned char ) );
+		   		
+		   		for(int j=0; j<profileBPos->size(); j++)
+		   		{
+					memcpy ( &profB[j][0], &initial_rotation[j][0], rs );
+					for ( int i = 0; i < rs; i++ )
+						profB[j][rs + i] = DEL;
+					
+					memcpy ( &profB[j][rs + rs], &initial_rotation[j][n - rs], rs );
+					profB[j][ 3* rs] = '\0';
 	
-			if( rs > 0 && sw . m == 0 )
-			{	
+					profileB->push_back( profB[j] );  
+				}
+
+				unsigned char ** profA = ( unsigned char ** ) calloc( ( profileAPos->size() ) , sizeof( unsigned char * ) );
+				for(int j=0; j<profileAPos->size(); j++)
+					profA[j] = ( unsigned char * ) calloc( ( 3*rs + 1 ) , sizeof( unsigned char ) );	
+		
+				for(int i=0; i<profileAPos->size(); i++)
+				{	
+					memcpy ( &profA[i][0], &sequences[ profileAPos->at(i)][0], rs );
+					for ( int k = 0; k < rs; k++ )
+						profA[i][rs + k] = DEL;
+						
+					memcpy ( &profA[i][rs + rs], &sequences[ profileAPos->at(i)][m - rs], rs );
+					profA[i][3*rs] = '\0';
+			
+					profileA->push_back( profA[i] );
+				}
+
+				// begin progressive alignment for every rotation of sequences in profileB
 				int ** TB; 
 				double ** SM, ** PM, ** IM, ** DM;
 			
@@ -276,7 +276,6 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 					for(int j = 0; j< profileBPos->size(); j++)
 						rotatedSeq[j] = ( unsigned char * ) calloc( ( 3 * rs + 1 ) , sizeof( unsigned char  ) );
 					
-
 					for(int j=0; j<profileBPos->size(); j++)
 					{
 						create_rotation( profB[j], i , rotatedSeq[j] );
@@ -318,53 +317,48 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				free( TB );
 				free( SM );
 				free( PM );
+					
+				for(int i=0; i<profileBPos->size(); i++)
+				{
+					free( profB[i] );
+					initial_rotation[i];
+				}	
+
+				for(int i=0; i<profileAPos->size(); i++)
+				{
+					free( profA[i] );
+				}	
+			
+				free( profA );
+				free( profB );
+				free( initial_rotation );
+
+				characters->clear();
 			}
 			else profileB->clear();
 
-			for(int i=0; i<profileBPos->size(); i++)
-			{
-				free( profB[i] );
-				free( initial_rotation[i] );
-			}	
-
-			for(int i=0; i<profileAPos->size(); i++)
-			{
-				free( profA[i] );
-			}	
-			
-			free( profA );
-			free( profB );
-			free( initial_rotation );
-
-			characters->clear();
-			
 			//calculate the final rotation using initial rotation and new rotation calculated
 			int final_rot = 0;
-			if( sw . m == 0 )
+	
+			if ( rotation <= rs )
 			{
-				
-				if ( rotation <= rs )
-				{
-					final_rot = rot + rotation;
-				}
-				else
-				{
-			 		final_rot = rot - ( 3*rs - rotation );
-				}
-
-				if ( final_rot > ( int ) n )
-				{
-			 		final_rot = final_rot % n;
-				}
-				else if ( final_rot < 0 )
-				{
-					final_rot = final_rot + n;
-				}
-				else final_rot = final_rot;
+				final_rot = rot + rotation;
 			}
-			else final_rot = rot;
+			else
+			{
+			 	final_rot = rot - ( 3*rs - rotation );
+			}
 
-				
+			if ( final_rot > ( int ) n )
+			{
+			 	final_rot = final_rot % n;
+			}
+			else if ( final_rot < 0 )
+			{
+				final_rot = final_rot + n;
+			}
+			else final_rot = final_rot;
+	
 			/* Add the rotation value to the rotation arrays */
 			for(int i =0; i<profileBPos->size(); i ++)
 			{
@@ -390,8 +384,6 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				create_rotation( sequences[ profileBPos->at(j ) ], final_rot, final_rotation[j] );
 				profileB->push_back( final_rotation[j] );
 			}
-			
-
 			profileA->clear();
 			
 			/* Place original sequences in profile A back into vector A */
