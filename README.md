@@ -29,8 +29,8 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
   -l, --block-length          <int>     The length of each block. Default: 25.
  Refining pairwise rotations for method hCED:
   -P, --refine-blocks         <dbl>     Refine rotations by aligning P blocks of the ends. Default: 1.
-  -O, --gap-open-seq          <int>     Affine gap open penalty in blocks alignment. Default: -10.
-  -E, --gap-extend-seq        <int>     Affine gap extension penalty in blocks alignment. Default: -1.
+  -O, --gap-open-seq          <int>     Affine gap open penalty in block alignment. Default: -10.
+  -E, --gap-extend-seq        <int>     Affine gap extension penalty in block alignment. Default: -1.
  Progressive alignment of profiles:
   -U, --gap-open-pro          <int>     Affine gap open penalty in alignment of profiles. Default: -10.
   -V, --gap-extend-pro        <int>     Affine gap extension penalty in alignment of profiles. Default: -1.
