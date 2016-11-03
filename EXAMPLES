@@ -13,7 +13,7 @@ To understand the purpose and usage of MARS please execute the following steps:
 	
 	or the following command for using the branch and bound method:
 	
-	$ ./mars -a DNA -m 1 -i ./data/10.gappy.fasta -o ./data/10.gappy.output.fasta
+	$ ./mars -a DNA -m 1 -i ./data/10.gappy.fasta -o ./data/10.gappy.output.fasta -l 20 -P 1
 
    The sequences are now refined via cyclic rotations and output in file ./data/10.gappy.output.fasta.	
 

@@ -35,7 +35,7 @@ using namespace seqan;
 
 int delta ( char a, char b, struct TSwitch sw )
  {
-  	if ( a == DEL || b == DEL ) 
+  	if ( a == DL || b == DL ) 
     	{
 		return 0;
     	}
@@ -213,13 +213,13 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 
 	memcpy ( &X[0], &xr[0], sl );
 	for ( int i = 0; i < sl; i++ )
-		X[sl + i] = DEL;
+		X[sl + i] = DL;
 	memcpy ( &X[sl + sl], &xr[m - sl], sl );
 	X[3 * sl] = '\0';
 	
 	memcpy ( &Y[0], &y[0], sl );
 	for ( int i = 0; i < sl; i++ )
-		Y[sl + i] = DEL;
+		Y[sl + i] = DL;
 	memcpy ( &Y[sl + sl], &y[n - sl], sl );
 	Y[3 * sl] = '\0';
 
@@ -273,18 +273,12 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
         else
                 ( * rotation ) = final_rot;
 
+
 	unsigned char * x_final_rotation = ( unsigned char * ) calloc( ( m + 1 ) , sizeof( unsigned char ) );
 	
 	create_rotation( x, ( *rotation ), x_final_rotation );
 
-
-	int sub = sw . S;
-	int indel = sw . I; 
-
-	if (  indel == 1 && sub == 1 )
-		editDistanceMyers( x_final_rotation, y, m, n, distance );
-	else
-		editDistance( x_final_rotation, y, m, n, distance, sub, indel ); 
+	editDistanceMyers( x_final_rotation, y, m, n, distance );
 
 	free ( X );
 	free ( Y );
@@ -309,32 +303,6 @@ int editDistanceMyers( unsigned char * xInput, unsigned char * yInput, int mInpu
 
 	( * distance ) = score;
 
-	return EXIT_SUCCESS;
-}
-
-unsigned int editDistance(unsigned char * xInput, unsigned char * yInput, int mInput, int nInput, unsigned int * distance, int sub, int indel )
-{
-	unsigned int x, y, lastdiag, olddiag;
-	unsigned int match = 0;
-	unsigned int * column;
-	column = ( unsigned int * ) calloc ( mInput + 1 , sizeof(unsigned int));
-	
-	for (y = 1; y <= mInput; y++)
-		column[y] = y;
-
-	for (x = 1; x <= nInput; x++) 
-	{
-        	column[0] = x;
-        	for (y = 1, lastdiag = x-1; y <= mInput; y++) 
-		{
-			olddiag = column[y];
-            		column[y] = MIN3(column[y] + indel, column[y-1] + indel, lastdiag + (xInput[y-1] == yInput[x-1] ? match : sub));
-            		lastdiag = olddiag;
-        	}
-    	}
-	
-	( * distance ) = column[mInput];
-	free ( column );
 	return EXIT_SUCCESS;
 }
 

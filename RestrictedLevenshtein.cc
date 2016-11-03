@@ -8,12 +8,13 @@
 *       some limits, in order to use it for the Maes algorithm cycle.         *
 ******************************************************************************/
 
-#include<RestrictedLevenshtein.h>
 #include<string.h>
 #include<stdlib.h>
+#include "RestrictedLevenshtein.h"
+#include "mars.h"
 #define CompareCharacters( _x_ , _y_ ) ( (_x_) != (_y_) )
 
-float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, Limits Limit , Path *path, float *gamma, int *SlopeToMinimumPath)
+float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, Limits Limit , Path *path, int *SlopeToMinimumPath)
 {
 	int column, row, min_row, char1 ;
 	float ShortestPathWeight[length2+1][2] ;
@@ -30,7 +31,7 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
 	/* Boundary conditions */
 
 	for (row = 0 ; row <= Limit.Left.Maximum[FirstCharacter] ; ++row ) 
-        	ShortestPathWeight[row][(FirstCharacter)%2] = row * gamma[1] ;
+        	ShortestPathWeight[row][(FirstCharacter)%2] = row * INS ;
 
 
 	/* Cycle for path under left limit path and over right path */
@@ -39,7 +40,7 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
 	{
 	        if( Limit.Right.Minimum[column] == 0 ) 
 		{
-		 	ShortestPathWeight[0][column%2]  = (column - FirstCharacter) * gamma[0] ;
+		 	ShortestPathWeight[0][column%2]  = (column - FirstCharacter) * INS ;
 		      	SlopeToMinimumPath[column] = 0 ;
 		      	min_row = 1;
         	}
@@ -52,7 +53,7 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
 			/* Insertion */
                 	if( row > Limit.Right.Minimum[column] )  
 			{
-                     		Insert = ShortestPathWeight[row - 1][column%2] + gamma[1] ; 
+                     		Insert = ShortestPathWeight[row - 1][column%2] + DEL ; 
                      		if(Insert < min) 
 				{
                           		min = Insert ;
@@ -69,9 +70,9 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
                          	Substitute = ShortestPathWeight[row - 1][(column-1)%2] ;
                           
 				if( CompareCharacters(pattern1[char1-1],pattern2[row-1]) != 0 )
-                                	Substitute = Substitute + gamma[2] ;
+                                	Substitute = Substitute + SUB ;
                           	else
-                                	Substitute = Substitute + gamma[3] ;
+                                	Substitute = Substitute + MAT ;
                           	if(Substitute < min) 
 				{
               		                min = Substitute ;
@@ -82,7 +83,7 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
 		        /*   Deletion   */
 		        if( row <= Limit.Left.Maximum[column-1]) 
 			{
-		                Delete = ShortestPathWeight[row][(column-1)%2] + gamma[0] ;
+		                Delete = ShortestPathWeight[row][(column-1)%2] + INS ;
 		                if(Delete < min) 
 				{
 		                	min =Delete ;

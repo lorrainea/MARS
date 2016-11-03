@@ -22,8 +22,6 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
  Cyclic edit distance computation between pairs of sequences:
   -m, --method                <int>     0 for heuristic cyclic edit distance hCED - Faster but less accurate. 
                                         1 for branch and bound method - Slower but more accurate. Default: 0.
-  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.
-  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.
  Computation of pairwise cyclic edit distance for method hCED. 
   -q, --q-length              <int>     The q-gram length. Default: 5.
   -l, --block-length          <int>     The length of each block. Default: 25.

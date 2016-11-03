@@ -39,8 +39,6 @@ static struct option long_options[] =
    { "gap-open-pro",            optional_argument, NULL, 'U' },
    { "gap-extend-pro",          optional_argument, NULL, 'V' },
    { "refine-blocks",           required_argument, NULL, 'P' },
-   { "cost-substitution",	optional_argument, NULL, 'S' },
-   { "cost-indels",		optional_argument, NULL, 'I' },
    { "method",			required_argument, NULL, 'm' },
    { "threads", 		optional_argument, NULL, 'T' },
    { "help",                    no_argument,       NULL, 'h' },
@@ -68,15 +66,13 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> U                              = -10;
    sw -> V                              = -1;
    sw -> P                              = 1.0;
-   sw -> S				= 1;
-   sw -> I 				= 1;
    sw -> l                              = 25;
    sw -> q                              = 5;
    sw -> m				= 0;
    sw -> T                              = 1;
    args = 0;
 
-   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:m:S:I:U:V:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
+   while ( ( opt = getopt_long ( argc, argv, "a:i:o:l:q:m:U:V:O:E:T:P:h", long_options, &oi ) ) != -1 ) 
     {
 
       switch ( opt )
@@ -115,24 +111,6 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
               return ( 0 );
             }
            sw -> q = val;
-           break;
-
-	case 'S':
-           val = strtol ( optarg, &ep, 10 );
-           if ( optarg == ep )
-            {
-              return ( 0 );
-            }
-           sw -> S = val;
-           break;
-
-	case 'I':
-           val = strtol ( optarg, &ep, 10 );
-           if ( optarg == ep )
-            {
-              return ( 0 );
-            }
-           sw -> I = val;
            break;
 
 	case 'V':
@@ -217,8 +195,6 @@ Usage of the tool
 */
 void usage ( void )
  {
-
-	
    fprintf ( stdout, " Usage: mars <options>\n" );
    fprintf ( stdout, " Standard (Mandatory):\n" );
    fprintf ( stdout, "  -a, --alphabet              <str>     'DNA' for nucleotide  sequences  or 'PROT' for protein  sequences.\n" );
@@ -228,12 +204,10 @@ void usage ( void )
    fprintf ( stdout, " Cyclic edit distance computation between pairs of sequences.\n" );   
    fprintf ( stdout, "  -m, --method                <int>     0 for heuristic cyclic edit distance hCED - Faster but less accurate. \n"
    		     "                                        1 for branch and bound method - Slower but more accurate. Default: 0.\n" );
-   fprintf ( stdout, "  -S, --cost-substitution     <int>     Cost of substitution for cyclic edit distance. Default: 1.\n" );
-   fprintf ( stdout, "  -I, --cost-indel            <int>     Cost of indel for cyclic edit distance. Default: 1.\n" );  
    fprintf ( stdout, " Computation of pairwise cyclic edit distance for method hCED. \n" );
    fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length. Default: 5.\n" );
    fprintf ( stdout, "  -l, --block-length          <int>     The length of each block. Default: 25.\n" );   
-   fprintf ( stdout, " Refining pairwise rotations for method hCED.\n" );
+   fprintf ( stdout, " Refining pairwise rotations.\n" );
    fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the rotations by aligning P blocks of the ends. Default: 1.\n" );
    fprintf ( stdout, "  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise block alignment. Default: -10.\n" );
    fprintf ( stdout, "  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise block alignment. Default: -1.\n" ); 

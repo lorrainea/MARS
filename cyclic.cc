@@ -17,7 +17,7 @@
 #define max(_x_,_y_) ( (_x_) > (_y_) ? (_x_) : (_y_)  )
 #define CompareCharacters( _x_ , _y_ ) ( (_x_) != (_y_) )
 
-void cyclic(unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, float *gamma, int time_rep, int norm, unsigned int * rotation, unsigned int * distance)
+void cyclic(unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, int time_rep, int norm, unsigned int * rotation, unsigned int * distance)
 {
 
 	int i, cyc, row_length;
@@ -26,7 +26,7 @@ void cyclic(unsigned char *pattern1, unsigned char *pattern2, int length1, int l
 	Limits Limit ;
 	Path path , *BestPath , *ptr;
 
-	thresh = 0.01*min(gamma[0], min(gamma[1], gamma[2]) ) ;
+	thresh = 0.01*min(INS, min( DEL,SUB ) );
 	row_length = 2*length1 + 1;
 
 	/* Memory allocation */ 
@@ -47,8 +47,8 @@ void cyclic(unsigned char *pattern1, unsigned char *pattern2, int length1, int l
 	/* Run bb method */
 		
 	int bb_type = 1 ;
-	distance2 = RestrictedLevenshtein(0, pattern1, pattern2, length1, length2, Limit, BestPath, gamma, SlopeToMinimumPath) ;
-	dummy_dist = bb(distance2, length1, length2, pattern1, pattern2, BestPath, &path,  bb_type , gamma, &cyc, rotation, distance, SlopeToMinimumPath ) ;
+	distance2 = RestrictedLevenshtein(0, pattern1, pattern2, length1, length2, Limit, BestPath, SlopeToMinimumPath) ;
+	dummy_dist = bb(distance2, length1, length2, pattern1, pattern2, BestPath, &path,  bb_type, &cyc, rotation, distance, SlopeToMinimumPath ) ;
 
 	/* Free memory */
 

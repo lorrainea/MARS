@@ -18,8 +18,6 @@
 
 int editDistanceMyers(unsigned char *xInput, unsigned char *yInput, int mInput, int nInput, unsigned int * distance);
 
-unsigned int editDistance(unsigned char * xInput, unsigned char * yInput, int mInput, int nInput, unsigned int * distance, int sub, int indel);
-
 unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned char * y, struct TSwitch  sw, unsigned int * rotation, unsigned int * distance, int ** &I, int ** &D, int ** &T );
 
 unsigned int nw_ag_allocation( unsigned int m, unsigned int n, int ** &I, int ** &D, int ** &T );

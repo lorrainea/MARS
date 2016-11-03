@@ -18,13 +18,17 @@
 
 #define INITIAL_SC		-100000
 #define ALLOC_SIZE               104857
-#define DEL                     '$'
+#define DL                      '$'
 #define NA			'N'
 #define DEL_STR                 "$"
 #define GAP 			'-'
 #define ERR                      24
 #define PROT                    "ARNDCQEGHILKMFPSTWYVBZX*"   //Proteins alphabet
 #define DNA                     "ATGCSWRYKMBVHDN"            //IUPAC alphabet
+#define INS			1
+#define DEL			1
+#define SUB			1
+#define MAT			0
 
 #define NUC_SCORING_MATRIX_SIZE 15
 #define PRO_SCORING_MATRIX_SIZE 24
@@ -68,5 +72,5 @@ double gettime ( void );
 void usage ( void );
 void init_substitution_score_tables ( void );
 
-void cyclic(unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, float *gamma, int time_rep, int norm, unsigned int * rotation, unsigned int * distance);
+void cyclic(unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, int time_rep, int norm, unsigned int * rotation, unsigned int * distance);
 extern void centra(char *string0, int a, char *sep, char *dummy ) ;

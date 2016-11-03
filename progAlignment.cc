@@ -210,7 +210,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			double score = INITIAL_SC;
 			int rotation = 0;
 			
-			if( sw . m == 0 && rs > 0)
+			if( rs > 0)
 			{
 				unsigned char ** initial_rotation = ( unsigned char ** ) calloc( ( profileBPos->size() ) , sizeof( unsigned char * ) );
 				for(int i=0; i<profileBPos->size(); i++ )
@@ -231,7 +231,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 		   		{
 					memcpy ( &profB[j][0], &initial_rotation[j][0], rs );
 					for ( int i = 0; i < rs; i++ )
-						profB[j][rs + i] = DEL;
+						profB[j][rs + i] = DL;
 					
 					memcpy ( &profB[j][rs + rs], &initial_rotation[j][n - rs], rs );
 					profB[j][ 3* rs] = '\0';
@@ -247,7 +247,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				{	
 					memcpy ( &profA[i][0], &sequences[ profileAPos->at(i)][0], rs );
 					for ( int k = 0; k < rs; k++ )
-						profA[i][rs + k] = DEL;
+						profA[i][rs + k] = DL;
 						
 					memcpy ( &profA[i][rs + rs], &sequences[ profileAPos->at(i)][m - rs], rs );
 					profA[i][3*rs] = '\0';
@@ -735,7 +735,7 @@ int similarity( unsigned char x, unsigned char y, struct TSwitch sw)
 {
 	int sim = 0;
 	
-	if ( x == DEL || y == DEL ) 
+	if ( x == DL || y == DL ) 
    	{
 		sim = 0;
    	}

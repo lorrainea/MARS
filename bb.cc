@@ -2,6 +2,7 @@
 #include <stdlib.h> 
 #include <iostream>
 #include "heap.h"
+#include "mars.h"
 #include "RestrictedLevenshtein.h"
 
 #define min(_x_,_y_) ( (_x_) < (_y_) ? (_x_) : (_y_) )
@@ -9,7 +10,7 @@
 
 using namespace std;
 
-float bb(float distance2, int length1, int length2, unsigned char *pattern1, unsigned char *pattern2, Path *BestPath, Path *path, int bb_type, float *gamma, int *cyc, unsigned int * rotation, unsigned int * distance, int * SlopeToMinimumPath)
+float bb(float distance2, int length1, int length2, unsigned char *pattern1, unsigned char *pattern2, Path *BestPath, Path *path, int bb_type, int *cyc, unsigned int * rotation, unsigned int * distance, int * SlopeToMinimumPath)
 {
 	int rotation2 , cc_bound, c_bound , r_bound, l_bound, i, lll, rrr, ccc;
 	float null, min_distance, RotatedDistance[length1 + 1], lower_bound ;
@@ -49,7 +50,7 @@ float bb(float distance2, int length1, int length2, unsigned char *pattern1, uns
 	if(min_distance > distance2) min_distance = distance2 ;
 		rotation2 = 0 ; 
 
-	lower_bound = BoundFunction(0, length1, RotatedDistance[0], RotatedDistance[length1], pattern1, pattern2, length1, length2, bb_type, gamma) ;
+	lower_bound = BoundFunction(0, length1, RotatedDistance[0], RotatedDistance[length1], pattern1, pattern2, length1, length2, bb_type) ;
 
 	HeapInit(&partition, length1+1) ; 
 	HeapInsert(&partition, range, lower_bound ); 
@@ -65,7 +66,7 @@ float bb(float distance2, int length1, int length2, unsigned char *pattern1, uns
 
 		CopyPath(BestPath + l_bound, &(Limit.Left), 2*length1 + 1 ) ;
 		CopyPath(BestPath + r_bound, &(Limit.Right), 2*length1 + 1 ) ; 
-		distance2 = RestrictedLevenshtein(c_bound, pattern1, pattern2, length1, length2, Limit, path, gamma, SlopeToMinimumPath) ;
+		distance2 = RestrictedLevenshtein(c_bound, pattern1, pattern2, length1, length2, Limit, path, SlopeToMinimumPath) ;
 
 		RotatedDistance[c_bound] = distance2 ;
 		CopyPath(path, BestPath + c_bound, 2*length1 + 1 ) ;
@@ -76,7 +77,7 @@ float bb(float distance2, int length1, int length2, unsigned char *pattern1, uns
 		}
 
 		/* Analisis de particion izquierda */
-		lower_bound = BoundFunction(l_bound, c_bound, RotatedDistance[l_bound], RotatedDistance[c_bound], pattern1, pattern2, length1, length2, bb_type, gamma) ;
+		lower_bound = BoundFunction(l_bound, c_bound, RotatedDistance[l_bound], RotatedDistance[c_bound], pattern1, pattern2, length1, length2, bb_type) ;
      		if(lower_bound < min_distance ) 
 		{
 			lll = l_bound ;
@@ -93,7 +94,7 @@ float bb(float distance2, int length1, int length2, unsigned char *pattern1, uns
 				CopyPath(BestPath + lll, &(Limit.Left), 2*length1 + 1 ) ;
 				CopyPath(BestPath + ccc, &(Limit.Right), 2*length1 + 1 ) ; 
 				cc_bound = lll + 1;
-				distance2 = RestrictedLevenshtein(cc_bound, pattern1, pattern2, length1, length2, Limit, path, gamma, SlopeToMinimumPath) ;
+				distance2 = RestrictedLevenshtein(cc_bound, pattern1, pattern2, length1, length2, Limit, path, SlopeToMinimumPath) ;
 			
 				RotatedDistance[cc_bound] = distance2 ;
 				CopyPath(path, BestPath + cc_bound, 2*length1 + 1 ) ;
@@ -106,7 +107,7 @@ float bb(float distance2, int length1, int length2, unsigned char *pattern1, uns
 		}
 
 		/* Analisis de particion derecha */
-     		lower_bound = BoundFunction(c_bound, r_bound, RotatedDistance[c_bound], RotatedDistance[r_bound], pattern1, pattern2, length1, length2, bb_type, gamma) ;
+     		lower_bound = BoundFunction(c_bound, r_bound, RotatedDistance[c_bound], RotatedDistance[r_bound], pattern1, pattern2, length1, length2, bb_type) ;
 		if(lower_bound < min_distance ) 
 		{
 			ccc = c_bound ;
@@ -122,7 +123,7 @@ float bb(float distance2, int length1, int length2, unsigned char *pattern1, uns
 				CopyPath(BestPath + ccc, &(Limit.Left), 2*length1 + 1 ) ;
 				CopyPath(BestPath + rrr, &(Limit.Right), 2*length1 + 1 ) ;
 				cc_bound = ccc + 1;
-				distance2 = RestrictedLevenshtein(cc_bound, pattern1, pattern2, length1, length2, Limit, path, gamma, SlopeToMinimumPath) ;
+				distance2 = RestrictedLevenshtein(cc_bound, pattern1, pattern2, length1, length2, Limit, path, SlopeToMinimumPath) ;
 
 				RotatedDistance[cc_bound] = distance2 ;
 				CopyPath(path, BestPath + cc_bound, 2*length1 + 1 ) ;
@@ -154,12 +155,12 @@ return min_distance ;
 }
 
 
-float BoundFunction(int left, int right, float left_cost, float right_cost, unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, int bound_type, float *gamma)
+float BoundFunction(int left, int right, float left_cost, float right_cost, unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, int bound_type)
 {
 	int i ;
 	float distance_approx, distance, suma ;
 
-	suma = gamma[1] + gamma[0];
+	suma = INS + DEL;
 
 	/* Calculo de bb1 */
 	if(bound_type == 1) 

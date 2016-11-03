@@ -215,13 +215,6 @@ int main(int argc, char **argv)
 		return ( 1 );
 	}
 
-	float * gamma = ( float * ) calloc ( 4 , sizeof ( float ) );
-
-	gamma[0] = sw . I; //insertion cost
-	gamma[1] = sw . I; //deletion cost
-	gamma[2] = sw . S; //substitution cost
-	gamma[3] = 0.0; //matching cost
-
 	fprintf ( stderr, " Computing cyclic edit distance for all sequence pairs\n" );
 		
 
@@ -298,14 +291,21 @@ int main(int argc, char **argv)
 				/*Produces more accurate rotations using refined sequences for method hCED*/
 				sacsc_refinement(seq[i], xr, seq[j], sw, &rotation, &distance, IM, DM, TM );
 			}
-			else cyclic( seq[i], seq[j], m, n, gamma, 1, 0, &rotation, &distance) ;
+			else 
+			{
+				/*Find rotation and distance using branch and bound method*/
+				cyclic( seq[i], seq[j], m, n, 1, 0, &rotation, &distance ) ;
+				create_rotation ( seq[i], rotation, xr );
+
+				/*Produces more accurate rotations using refined sequences for branch and bound method*/
+				sacsc_refinement( seq[i], xr, seq[j], sw, &rotation, &distance, IM, DM, TM );
+			}
 
 			D[i][j] . err = distance;
 			D[i][j] . rot = rotation;
 
 			free( xr );
 		}
-
 		
 	}
 
@@ -387,7 +387,6 @@ int main(int argc, char **argv)
         free ( sw . input_filename );
         free ( sw . output_filename );
         free ( sw . alphabet );
-	free( gamma );
 
 	return ( 0 );
 }
