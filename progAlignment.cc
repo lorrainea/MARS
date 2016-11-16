@@ -181,6 +181,9 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 	   		}
 
 			int rot = rotValue;
+		
+			if( sw . l == 0 )
+				sw . l = sqrt( m );
 
 			int rs =  sw . l * sw . P;
 

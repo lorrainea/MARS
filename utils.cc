@@ -66,7 +66,7 @@ int decode_switches ( int argc, char * argv [], struct TSwitch * sw )
    sw -> U                              = -10;
    sw -> V                              = -1;
    sw -> P                              = 1.0;
-   sw -> l                              = 25;
+   sw -> l                              = 0;
    sw -> q                              = 5;
    sw -> m				= 0;
    sw -> T                              = 1;
@@ -201,17 +201,16 @@ void usage ( void )
    fprintf ( stdout, "  -i, --input-file            <str>     MultiFASTA input filename.\n" );
    fprintf ( stdout, "  -o, --output-file           <str>     Output filename with rotated sequences.\n" );    
    fprintf ( stdout, " Optional:\n" );
-   fprintf ( stdout, " Cyclic edit distance computation between pairs of sequences.\n" );   
+   fprintf ( stdout, " Cyclic Edit Distance Computation.\n" );   
    fprintf ( stdout, "  -m, --method                <int>     0 for heuristic cyclic edit distance hCED - Faster but less accurate. \n"
    		     "                                        1 for branch and bound method - Slower but more accurate. Default: 0.\n" );
-   fprintf ( stdout, " Computation of pairwise cyclic edit distance for method hCED. \n" );
-   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length. Default: 5.\n" );
-   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block. Default: 25.\n" );   
-   fprintf ( stdout, " Refining pairwise rotations.\n" );
+   fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length for method hCED. Default: 5.\n" );
+   fprintf ( stdout, " Refinement Parameters. \n" );
+   fprintf ( stdout, "  -l, --block-length          <int>     The length of each block. Default: sqrt(seq_length).\n" );   
    fprintf ( stdout, "  -P, --refine-blocks         <dbl>     Refine the rotations by aligning P blocks of the ends. Default: 1.\n" );
+   fprintf ( stdout, " Gap Penalties.\n" ); 
    fprintf ( stdout, "  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise block alignment. Default: -10.\n" );
    fprintf ( stdout, "  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise block alignment. Default: -1.\n" ); 
-   fprintf ( stdout, " Progressive alignment of profiles.\n" ); 
    fprintf ( stdout, "  -U, --gap-open-pro          <int>     Affine gap open penalty in alignment of profiles. Default: -10.\n" );
    fprintf ( stdout, "  -V, --gap-extend-pro        <int>     Affine gap extension penalty in alignment of profiles. Default: -1.\n" );
    fprintf ( stdout, " Number of threads.\n" ); 

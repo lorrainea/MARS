@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <fstream>
 #include <float.h>
 #include <limits.h>
 #include <omp.h>
@@ -88,12 +89,6 @@ int main(int argc, char **argv)
 			return ( 1 );	
 		}
 
-		if( sw . m == 0 && sw . q >= sw . l )
-		{
-			fprintf ( stderr, " Error: The length of the q-gram must be smaller than the block length.\n" );
-			return ( 1 );
-		}
-
                 input_filename       = sw . input_filename;
 		if ( input_filename == NULL )
 		{
@@ -119,6 +114,7 @@ int main(int argc, char **argv)
 	unsigned int max_alloc_seq_id = 0;
 	unsigned int max_alloc_seq = 0;
 	c = fgetc( in_fd );
+
 	do
 	{
 		if ( c != '>' )
@@ -201,6 +197,7 @@ int main(int argc, char **argv)
 				max_alloc_seq_len += ALLOC_SIZE;
 			}
 			seq[ num_seqs ][ seq_len ] = '\0';
+
 			total_length += seq_len;
 			num_seqs++;
 		}
@@ -238,32 +235,33 @@ int main(int argc, char **argv)
 
 	}
 		
+
+	int prevL = sw . l;
+	
 	/*Finds an approximate rotation for every pair of sequences in the data sets for method hCED*/ 
 	if ( sw . m == 0 )
 		circular_sequence_comparison ( seq, sw, D, num_seqs );
 
 	init_substitution_score_tables ();
 
-	int rs = sw . l * sw . P * 3;
-
-	int ** IM;
-	int ** DM;
-	int ** TM;
-
-	if( sw . O != sw . E )
-		nw_ag_allocation ( rs, rs, IM, DM, TM );
-	else 
-		nw_allocation( rs, rs, TM );
-
 	#pragma omp parallel for
 	for ( int i = 0; i < num_seqs; i++ )
 	{	
 		unsigned int m = strlen ( ( char * ) seq[i] );
+		
+		if( sw . l == 0 )
+			sw . l = sqrt(m);
 	
 		if( sw . P * sw . l > m/3 )
 		{
 			fprintf( stderr, " Error: P is too large!\n" );
 			exit( EXIT_FAILURE );
+		}
+
+		if( sw . m == 0 && sw . q >= sw . l )
+		{
+			fprintf ( stderr, " Error: The length of the q-gram must be smaller than the block length.\n" );
+			exit( 1 );
 		}
 
 		for ( int j = 0; j < num_seqs; j ++ )
@@ -280,7 +278,6 @@ int main(int argc, char **argv)
 				exit ( 1 );
 			}
 
-			
 			unsigned int distance = D[i][j] . err;
 			unsigned int rotation = D[i][j] . rot;
 
@@ -289,7 +286,7 @@ int main(int argc, char **argv)
 				create_rotation ( seq[i], rotation, xr );
 
 				/*Produces more accurate rotations using refined sequences for method hCED*/
-				sacsc_refinement(seq[i], xr, seq[j], sw, &rotation, &distance, IM, DM, TM );
+				sacsc_refinement(seq[i], xr, seq[j], sw, &rotation, &distance);
 			}
 			else 
 			{
@@ -298,7 +295,7 @@ int main(int argc, char **argv)
 				create_rotation ( seq[i], rotation, xr );
 
 				/*Produces more accurate rotations using refined sequences for branch and bound method*/
-				sacsc_refinement( seq[i], xr, seq[j], sw, &rotation, &distance, IM, DM, TM );
+				sacsc_refinement( seq[i], xr, seq[j], sw, &rotation, &distance);
 			}
 
 			D[i][j] . err = distance;
@@ -311,8 +308,10 @@ int main(int argc, char **argv)
 
 	fprintf ( stderr, " Creating the guide tree\n" );
 
+	sw . l = prevL;
+
 	/*Creates the guide tree*/
-	nj ( D, num_seqs, seq, sw, Rot);
+	nj ( D, num_seqs, seq, sw, Rot );
 
 	fprintf ( stderr, " Preparing the output\n" );
 
@@ -339,6 +338,7 @@ int main(int argc, char **argv)
 			succ++;
 		}		
 	}
+
 		
 	if ( fclose ( out_fd ) )
 	{
@@ -358,30 +358,12 @@ int main(int argc, char **argv)
         fprintf( stderr, "Elapsed time for processing %d sequence(s): %lf secs.\n", num_seqs, ( end - start ) );
 	
 	/* Deallocate */
-
-	for ( int j = 0; j < rs + 1; j ++ )
-	{
-		free ( TM[j] );
-	}
-
-	if( sw . O != sw . E )
-	{
-
-		for ( int j = 0; j < rs + 1; j ++ )
-		{
-			free ( IM[j] );
-			free ( DM[j] );
-		}
-		free ( IM );
-		free ( DM );
-	}
 	
 	for ( i = 0; i < num_seqs; i ++ )
 	{
 		free ( seq[i] );
 		free( seq_id[i] );
 	}	
-	free ( TM );
 	free ( seq );
 	free ( seq_id );
         free ( sw . input_filename );

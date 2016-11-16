@@ -195,8 +195,13 @@ unsigned int nw ( unsigned char * p, unsigned int m, unsigned char * t, unsigned
 	return EXIT_SUCCESS;
 }
 
-unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned char * y, struct TSwitch  sw, unsigned int * rotation, unsigned int * distance, int ** &I, int ** &D, int ** &T ) 
+unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned char * y, struct TSwitch  sw, unsigned int * rotation, unsigned int * distance ) 
 {
+
+	int ** I;
+	int ** D;
+	int ** T;
+
 	unsigned int rot = *rotation;
 
 	unsigned int m = strlen ( ( char * ) x );
@@ -225,6 +230,13 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 
 	unsigned int mm = sl + sl + sl;
 	unsigned int nn = sl + sl + sl;
+
+	int rs = sw . l * sw . P * 3;	
+
+	if( sw . O != sw . E )
+		nw_ag_allocation ( rs, rs, I, D, T );
+	else 
+		nw_allocation( rs, rs, T );
 
 	int score = -INT_MAX;
 	int max_score = score;
@@ -284,6 +296,23 @@ unsigned int sacsc_refinement ( unsigned char * x, unsigned char * xr, unsigned 
 	free ( Y );
 	free ( Xr );
 	free( x_final_rotation );
+
+	for ( int j = 0; j < rs + 1; j ++ )
+	{
+		free ( T[j] );
+	}
+
+	if( sw . O != sw . E )
+	{
+		for ( int j = 0; j < rs + 1; j ++ )
+		{
+			free ( I[j] );
+			free ( D[j] );
+		}
+		free ( I );
+		free ( D );
+	}
+	free( T );
 
 	return EXIT_SUCCESS;
 }
