@@ -73,17 +73,6 @@ unsigned int circular_sequence_comparison (  unsigned char ** seq, struct TSwitc
 	INT * LCP;
 	INT * invSA;
 
-	/*INT * boundaries = ( INT * ) malloc( ( num_seqs + 1 ) * sizeof( INT ) );
-
-	INT starting_y = 0;
-
-	for(int i=0; i<num_seqs; i++)
-	{
-		boundaries[i] = starting_y;
-		starting_y = starting_y +  ( 2 * strlen ( ( char * ) seq[i] ) );
-	}*/
-
-
         /* Compute the suffix array */
         SA = ( INT * ) malloc( ( total_length ) * sizeof( INT ) );
         if( ( SA == NULL) )
@@ -168,8 +157,12 @@ unsigned int circular_sequence_comparison (  unsigned char ** seq, struct TSwitc
 		int m = strlen( ( char * ) seq[i] );
 	
 		INT mm = m + m - q + 1;
+		
+		INT b;
+		if( sw . l == 0 )
+			b = (int) ( m / sqrt(m) );
+		else b = (int) ( m / sw . l );
 
-		int b = (int) ( m / sw . l );
 		INT * xx = ( INT * ) calloc( ( mm + 1 ) , sizeof( INT ) );
 
 
