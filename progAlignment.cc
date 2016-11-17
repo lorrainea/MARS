@@ -324,7 +324,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 				for(int i=0; i<profileBPos->size(); i++)
 				{
 					free( profB[i] );
-					initial_rotation[i];
+					free( initial_rotation[i] );
 				}	
 
 				for(int i=0; i<profileAPos->size(); i++)
