@@ -306,6 +306,39 @@ int main(int argc, char **argv)
 		
 	}
 
+
+	if ( sw . m == 0 )
+	{
+		for(int i=0; i<num_seqs; i++)
+		{
+		
+
+			for(int j=0; j<num_seqs; j++)
+			{
+				unsigned int distance = 0;
+				unsigned int rotation = 0;
+
+				if( D[i][j] . err - D[j][i] . err > ( total_length/num_seqs )*0.05 )
+				{
+					unsigned int m = strlen ( ( char * ) seq[i] );
+					unsigned int n = strlen ( ( char * ) seq[j] );
+					unsigned char * xr = ( unsigned char * ) calloc( ( m + 1 ) , sizeof( unsigned char ) );
+
+					cyclic( seq[i], seq[j], m, n, 1, 0, &rotation, &distance ) ;
+					create_rotation ( seq[i], rotation, xr );
+					sacsc_refinement( seq[i], xr, seq[j], sw, &rotation, &distance);
+
+					D[i][j] . err = distance;
+					D[i][j] . rot = rotation;
+
+					free( xr );
+				}
+
+			
+			}
+		}
+	}
+
 	fprintf ( stderr, " Creating the guide tree\n" );
 
 	sw . l = prevL;
@@ -321,8 +354,6 @@ int main(int argc, char **argv)
 		return ( 1 );
 	}
 
-	unsigned int succ = 0;
-	unsigned int unsucc = 0;
 	for ( int i = 0; i < num_seqs; i ++ )
 	{
 		if ( Rot[i] >= 0 )
@@ -335,7 +366,6 @@ int main(int argc, char **argv)
 			fprintf( out_fd, ">%s\n", seq_id[i] );
 			fprintf( out_fd, "%s\n", rotation );
 			free ( rotation );
-			succ++;
 		}		
 	}
 
