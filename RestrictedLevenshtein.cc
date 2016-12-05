@@ -1,7 +1,5 @@
 /******************************************************************************
 *                                                                             *
-*  ----------- RestrictedLevenshtein.c / RestrictedLevenshtein.o ----------   *
-*                                                                             *
 * Programmer : Guillermo Peris                                                *
 * Version : Febrero, 2001                                                     *
 * Use : This procedure computes Levenshtein distance restricted to            *

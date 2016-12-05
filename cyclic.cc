@@ -1,17 +1,19 @@
 /******************************************************************************
 *                                                                             *
-*  -------------------------- cyclic.c / cyclic.o -------------------------   *
-*                                                                             *
+* Programmer : Guillermo Peris                                                *
+* Version : Febrero, 2001                                                     *
+* Use : This procedure computes Levenshtein distance restricted to            *
+*       some limits, in order to use it for the Maes algorithm cycle.         *
 ******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "RestrictedLevenshtein.h"
-#include "mars.h"
 #include <sys/time.h>
 #include <time.h>
 #include <math.h> 
+#include "RestrictedLevenshtein.h"
+#include "mars.h"
 
 #define min(_x_,_y_) ( (_x_) < (_y_) ? (_x_) : (_y_)  )
 #define max(_x_,_y_) ( (_x_) > (_y_) ? (_x_) : (_y_)  )

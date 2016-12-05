@@ -1,5 +1,13 @@
-#include <stdio.h>
+/******************************************************************************
+*                                                                             *
+* Programmer : Guillermo Peris                                                *
+* Version : Febrero, 2001                                                     *
+* Use : This procedure computes Levenshtein distance restricted to            *
+*       some limits, in order to use it for the Maes algorithm cycle.         *
+******************************************************************************/
+
 #include <stdlib.h> 
+#include <stdio.h>
 #include <iostream>
 #include "heap.h"
 #include "mars.h"

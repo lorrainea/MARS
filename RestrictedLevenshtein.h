@@ -1,3 +1,11 @@
+/******************************************************************************
+*                                                                             *
+* Programmer : Guillermo Peris                                                *
+* Version : Febrero, 2001                                                     *
+* Use : This procedure computes Levenshtein distance restricted to            *
+*       some limits, in order to use it for the Maes algorithm cycle.         *
+******************************************************************************/
+
 #define INFINITE 10000000.0 
 #define NEG_INFTY -10000000.0
 
