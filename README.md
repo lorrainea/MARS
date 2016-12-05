@@ -20,19 +20,19 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
   -o, --output-file           <str>     Output filename with rotated sequences.
  Optional:
  Cyclic Edit Distance Computation.
-  -m, --method                <int>     0 for heuristic cyclic edit distance hCED - Faster but less accurate. 
-                                        1 for branch and bound method - Slower but more accurate. Default: 0.
+  -m, --method                <int>     0 for heuristic Cyclic Edit Distance (hCED) - Faster but less accurate. 
+                                        1 for branch and bound method - Slower but exact. Default: 0.
   -q, --q-length              <int>     The q-gram length for method hCED. Default: 5.
  Refinement Parameters. 
   -l, --block-length          <int>     The length of each block. Default: sqrt(seq_length).
   -P, --refine-blocks         <dbl>     Refine the rotations by aligning P blocks of the ends. Default: 1.
  Gap Penalties.
-  -O, --gap-open-seq          <int>     Affine gap open penalty in pairwise block alignment. Default: -10.
-  -E, --gap-extend-seq        <int>     Affine gap extension penalty in pairwise block alignment. Default: -1.
-  -U, --gap-open-pro          <int>     Affine gap open penalty in alignment of profiles. Default: -10.
-  -V, --gap-extend-pro        <int>     Affine gap extension penalty in alignment of profiles. Default: -1.
+  -O, --gap-open-seq          <int>     Gap open penalty in pairwise block alignment. Default: -10.
+  -E, --gap-extend-seq        <int>     Gap extension penalty in pairwise block alignment. Default: -1.
+  -U, --gap-open-pro          <int>     Gap open penalty in alignment of profiles. Default: -10.
+  -V, --gap-extend-pro        <int>     Gap extension penalty in alignment of profiles. Default: -1.
  Number of threads.
-  -T, --threads               <int>     Number of threads to use. Default: 1.
+  -T, --threads               <int>     Number of threads to use. Default: 1. 
 ```
 
 <b>Example</b>: For a typical run, see file EXAMPLES.

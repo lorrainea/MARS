@@ -1,7 +1,9 @@
 /******************************************************************************
 *                                                                             *
-*  ---------------------------   heap.h   ---------------------------------   *
-*                                                                             *
+* Programmer : Guillermo Peris                                                *
+* Version : Febrero, 2001                                                     *
+* Use : This procedure computes Levenshtein distance restricted to            *
+*       some limits, in order to use it for the Maes algorithm cycle.         *
 ******************************************************************************/
 
 #ifndef _HEAP_H_INCLUDED

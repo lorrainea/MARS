@@ -1,12 +1,9 @@
 /******************************************************************************
 *                                                                             *
-*  -----------------------    heap.c --------------------------------------   *
-*                                                                             *
-*******************************************************************************
-* Libreria para la implementacion de colas de prioridad con heaps.            *
-* Para mas informacion acerca del modo de utilizacion, leer el                *
-* header heap.h  .                                                            *
-*                                                                             *
+* Programmer : Guillermo Peris                                                *
+* Version : Febrero, 2001                                                     *
+* Use : This procedure computes Levenshtein distance restricted to            *
+*       some limits, in order to use it for the Maes algorithm cycle.         *
 ******************************************************************************/
 
 #include<stdio.h>
