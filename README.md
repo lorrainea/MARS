@@ -37,5 +37,10 @@ MARS is a program, which can be used in conjunction with any multiple sequence a
 
 <b>Example</b>: For a typical run, see file EXAMPLES.
 
+<b>Citation</b>
+```
+L. A. K. Ayad, S. P. Pissis
+MARS: improving multiple circular sequence alignment using refined sequences
+BMC Genomics, vol. 18, no. 1, 2017, pp. 86.
+```
 <b>License</b>: GNU GPLv3 License; Copyright (C) 2016 Lorraine A.K. Ayad and Solon P. Pissis.
-
