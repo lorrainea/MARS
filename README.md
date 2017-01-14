@@ -1,4 +1,4 @@
-MARS: Multiple circular sequence Alignment using Refined Sequences
+MARS: improving Multiple circular sequence Alignment using Refined Sequences
 ===
 
 
