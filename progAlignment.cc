@@ -22,8 +22,6 @@
 #include <string.h>
 #include <iostream>
 #include <time.h>
-#include <seqan/graph_msa.h>
-#include <seqan/align.h>
 #include <vector>
 #include "EDNAFULL.h"
 #include "EBLOSUM62.h"
@@ -31,7 +29,7 @@
 #include "sacsc.h"
 #include "nj.h"
 
-using namespace seqan;
+
 using namespace std;
 
 unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, struct TSwitch  sw, int * Rot, vector<array<int, 2>> * branchingOrder, unsigned int num_seqs )
