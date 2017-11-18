@@ -27,6 +27,7 @@
 #include <vector>
 #include "mars.h"
 #include "nj.h"
+#include <array>
 
 using namespace seqan;
 using namespace std;
