@@ -28,6 +28,7 @@
 #include "mars.h"
 #include "sacsc.h"
 #include "nj.h"
+#include <array>
 
 
 using namespace std;
