@@ -14,16 +14,19 @@
 
 float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, Limits Limit , Path *path, int *SlopeToMinimumPath)
 {
-	int column, row, min_row, char1 ;
-	float ShortestPathWeight[length2+1][2] ;
-	float Delete, Substitute, Insert, min , path_dist;
+	unsigned long long column, row, min_row, char1 ;
+	unsigned long long ShortestPathWeight[length2+1][2] ;
+	unsigned long long Delete, Substitute, Insert, min , path_dist;
 
 	/* Initializing matrices */
 
 	SlopeToMinimumPath[Limit.Right.Minimum[FirstCharacter]*(2*length1+1)+FirstCharacter]=-1;
-	for(row = Limit.Right.Minimum[FirstCharacter] + 1 ; 
-    		row <= Limit.Left.Maximum[FirstCharacter]; ++row) 
-        SlopeToMinimumPath[row*(2*length1+1)+FirstCharacter] =  2 ;
+	for(row = Limit.Right.Minimum[FirstCharacter] + 1 ; row <= Limit.Left.Maximum[FirstCharacter]; ++row) 
+	{
+		unsigned long long in= row*(2*length1+1)+FirstCharacter;
+                if( in < (length2+1)*(2*length1+1) )
+                        SlopeToMinimumPath[in] =  2 ;
+        }
 
 
 	/* Boundary conditions */
@@ -55,7 +58,11 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
                      		if(Insert < min) 
 				{
                           		min = Insert ;
-                          		SlopeToMinimumPath[row*(2*length1+1)+column] = 2 ;
+					unsigned long long in2= row*(2*length1+1)+column;
+
+                                        if( in2 < (length2+1)*(2*length1+1) )
+                                                SlopeToMinimumPath[in2] =  2 ;
+                                     
                           	}
                      	}
 
@@ -74,7 +81,9 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
                           	if(Substitute < min) 
 				{
               		                min = Substitute ;
-              		                SlopeToMinimumPath[row*(2*length1+1)+column] = 1 ;
+              		                unsigned long long in3= row*(2*length1+1)+column;
+                                        if( in3 < (length2+1)*(2*length1+1) )
+                                                SlopeToMinimumPath[in3] =  1 ;
                                 }
 			}
 		
@@ -85,7 +94,10 @@ float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigne
 		                if(Delete < min) 
 				{
 		                	min =Delete ;
-		                      	SlopeToMinimumPath[row*(2*length1+1)+column]= 0;
+		                      	unsigned long long in4 = row*(2*length1+1)+column;
+
+                                        if( in4 < (length2+1)*(2*length1+1) )
+                                                SlopeToMinimumPath[in4] =  0 ;
 		                }
 		        }
 		        ShortestPathWeight[row][column%2]  = min ;
