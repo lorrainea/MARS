@@ -14,7 +14,7 @@
 
 float RestrictedLevenshtein(int FirstCharacter, unsigned char *pattern1, unsigned char *pattern2, int length1, int length2, Limits Limit , Path *path, int *SlopeToMinimumPath)
 {
-	unsigned long long column, row, min_row, char1 ;
+	long long column, row, min_row, char1 ;
 	unsigned long long ShortestPathWeight[length2+1][2] ;
 	unsigned long long Delete, Substitute, Insert, min , path_dist;
 
