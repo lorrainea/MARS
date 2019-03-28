@@ -290,6 +290,13 @@ int main(int argc, char **argv)
 			}
 			else 
 			{
+
+				if( m > 20000 || n > 20000 )
+				{
+					fprintf( stderr, " Method -m 1 is only suitable for short sequences. Please use method -m 0.\n" );
+					exit ( 1 );
+				}
+
 				/*Find rotation and distance using branch and bound method*/
 				cyclic( seq[i], seq[j], m, n, 1, 0, &rotation, &distance ) ;
 				create_rotation ( seq[i], rotation, xr );
