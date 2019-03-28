@@ -203,7 +203,8 @@ void usage ( void )
    fprintf ( stdout, " Optional:\n" );
    fprintf ( stdout, " Cyclic Edit Distance Computation.\n" );   
    fprintf ( stdout, "  -m, --method                <int>     0 for heuristic Cyclic Edit Distance (hCED) - Faster but less accurate. \n"
-   		     "                                        1 for branch and bound method - Slower but exact. Default: 0.\n" );
+   		     "                                        1 for branch and bound method - (Only suitable for sequences <20,000bp. \n"
+		     "					Slower but exact. Default: 0.\n" );
    fprintf ( stdout, "  -q, --q-length              <int>     The q-gram length for method hCED. Default: 5.\n" );
    fprintf ( stdout, " Refinement Parameters. \n" );
    fprintf ( stdout, "  -l, --block-length          <int>     The length of each block. Default: sqrt(seq_length).\n" );   
