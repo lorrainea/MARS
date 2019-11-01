@@ -436,7 +436,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 	free( R );
 
 
-return 0;
+return 1;
 }
 
 unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, vector<int> * profileAPos, vector<int> * profileBPos, unsigned char ** sequences , int ** &TB)
@@ -545,7 +545,7 @@ unsigned int alignSequences(vector<unsigned char *> * profileA, vector<unsigned 
 	delete( ASequences );
 	delete( BSequences );
 
-return 0;
+return 1;
 }
 
 
@@ -628,6 +628,8 @@ unsigned int alignAllocation( double ** &PM, double * &SM, int ** &TB, vector<ch
 			PM[ pos ][ j ] = PM[ pos ][ j ] + prob;
 		}
 	}
+
+return 1;
 }
 
 unsigned int alignmentScore(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, int ** &TB, double * &SM, double ** &PM, vector<char> * characters, unsigned int calculate_TB)
@@ -792,6 +794,8 @@ unsigned int pairAllocation( double * &SM, int ** &TB, vector<unsigned char *> *
 		TB[0][j] = -1;
 
 	SM[0] = 0;
+
+return 1;
 }
 
 unsigned int pairAllocation_ag( double * &SM, int ** &TB,  double * &IM, double * &DM, vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw)
@@ -854,6 +858,8 @@ unsigned int pairAllocation_ag( double * &SM, int ** &TB,  double * &IM, double 
 		TB[0][j] = -1;
 
 	SM[0] = 0;
+
+return 1;
 }
 
 unsigned int alignPairs(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB , struct TSwitch sw, int ** &TB,  double * &SM )
@@ -1097,7 +1103,7 @@ unsigned int alignAllocation_ag( double ** &PM, double * &SM, double * &IM, doub
 		}
 	}
 
-return 0;
+return 1;
 }
 
 unsigned int alignmentScore_ag(vector<unsigned char *> * profileA, vector<unsigned char *> * profileB, double * score , struct TSwitch sw, int i, int * rotation, int ** &TB,  double * &SM, double ** &PM, double * &IM, double * &DM, vector<char> * characters, unsigned int calculate_TB)

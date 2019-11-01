@@ -159,7 +159,7 @@ float bb(float distance2, int length1, int length2, unsigned char *pattern1, uns
 	if(min_distance == external_bound)
 		min_distance = -1.0;
 
-return min_distance ;
+return min_distance;
 }
 
 
@@ -177,5 +177,7 @@ float BoundFunction(int left, int right, float left_cost, float right_cost, unsi
       		if (distance_approx < 0.0) distance_approx = 0.0;  
 			return distance_approx ;
 	}
+
+return 0;
 }
 
