@@ -1,7 +1,0 @@
-*.x
-*.x.dSYM
-*.gcno
-*.gcda
-*.swp
-*.swo
-CompileTest.hpp
