@@ -351,7 +351,7 @@ unsigned int progAlignment(TPOcc ** D, unsigned char ** seq, TGraph njTree, stru
 			for(int i =0; i<profileBPos->size(); i ++)
 			{
 				Rot[ profileBPos->at(i) ] = Rot[ profileBPos->at(i) ] + final_rot;				
-				for(int j=0; j<=final_rot; j++)
+				for(int j=0; j<final_rot; j++)
 				{
 					if( sequences[ profileBPos->at(i)][j] == GAP )
 					{
