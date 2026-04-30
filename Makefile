@@ -23,16 +23,15 @@ else
     LFLAGS += -fopenmp
 endif
 
-
  
-LFLAGS= -std=c++11 -I ./ -I ./libsdsl/include/ -L ./libsdsl/lib/ -lsdsl -ldivsufsort -ldivsufsort64 $(RPATH_FLAG) $(OPENMP_LIBS)
+LFLAGS= -std=c++11 -I ./ -I ./libsdsl/include/ -I ./seqan/include/ -L ./libsdsl/lib/ -lsdsl -ldivsufsort -ldivsufsort64 $(RPATH_FLAG) $(OPENMP_LIBS)
  
 EXE=    mars
  
 SRC=    mars.cc matrices.cc utils.cc sacsc.cc ced.cc nj.cc progAlignment.cc cyclic.cc RestrictedLevenshtein.cc bb.cc heap.cc edlib.cc
  
 HD=     EBLOSUM62.h EDNAFULL.h mars.h sacsc.h ced.h nj.h RestrictedLevenshtein.h heap.h Makefile
- 
+
 # 
 # No need to edit below this line 
 # 
